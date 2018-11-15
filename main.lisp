@@ -23,6 +23,8 @@
 	)
 )
 
+;;; dgtedtt
+
 (defun crtajTablu(dimBlanko dimCrtice n)
 	(cond ((equal n 11))
 		((< n 6) (stampajBlanko dimBlanko) (stampajCrtice dimCrtice) (crtajTablu (- dimBlanko 1) (+ dimCrtice 1) (+ 1 n)))
