@@ -1,4 +1,3 @@
-;;; (format t "~%A.      _ _ _ _ _ _ _      ~%B.    _ _ _ _ _ _ _ _ _    ~%")
 
 (defun stampajBlanko(br)
 	(cond ((equal br 0) (format t '""))
@@ -23,6 +22,8 @@
 			((> br 0) (format t "_ ") (stampajCrtice(- br 1)))
 	)
 )
+
+;;; dgtedtt
 
 (defun crtajTablu(dimBlanko dimCrtice n)
 	(cond ((equal n 11))
