@@ -1,4 +1,3 @@
-;;; (format t "~%A.      _ _ _ _ _ _ _      ~%B.    _ _ _ _ _ _ _ _ _    ~%")
 
 (defun stampajBlanko(br)
 	(cond ((equal br 0) (format t '""))
