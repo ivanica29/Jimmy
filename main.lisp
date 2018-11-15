@@ -1,4 +1,4 @@
-
+;;caoooss
 (defun stampajBlanko(br)
 	(cond ((equal br 0) (format t '""))
 			((> br 0) (format t " ") (stampajBlanko(- br 1)))
