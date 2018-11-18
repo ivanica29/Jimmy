@@ -119,13 +119,12 @@
        )
 )
 
-
 ; ===================
 ; Nevalidan potez
 ;====================
 (defun validanPotez()
 	 (cond
-	 	((not (proveriValidnostReda trenutnoStanjeTable)) (format t "gdsada"))
+	 	((not (proveriValidnostReda trenutnoStanjeTable)) (format t "Nepostojeci red!~%"))
 	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)))
 	 )
  )
@@ -139,7 +138,7 @@
 
 (defun proveriValidnostReda(l)
 	(cond 
-		((null (car l)) '())
+		((> (nth 0 trenutniRed) (- (* dimenzije 2) 2) ) '())
 		((listp (member (car potez) (car l))) t)
 		(t (proveriValidnostReda (cdr l)))
 	)
@@ -155,6 +154,7 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
+	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 )
 
