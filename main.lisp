@@ -8,13 +8,7 @@
 	(stampajPrviRed 0)
 
 	(stampajTablu trenutnoStanjeTable	)
-	(igraj prviIgrac)
-  	;(stampajTablu (generisiTablu dimenzije 0))
- 	;(izbor_redosleda)
- 	;(defvar tabla)
-  	;(setq tabla (crtajTablu n n n '0 nizSlova))
-  	;(format t "~a" (nadjiRed 'B))
-
+	(igraj prviIgrac)4r/
 )
 
 (defun kreirajGlobalnePromenljive()
@@ -129,15 +123,11 @@
 ; ===================
 ; Nevalidan potez
 ;====================
-
-(t (and (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)) (proveriValidnostReda trenutnoStanjeTable)))
-
-
 (defun validanPotez()
-	(cond
-		(t (and (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)) (proveriValidnostReda trenutnoStanjeTable)))
-
-	)
+	 (cond
+	 	((not (proveriValidnostReda trenutnoStanjeTable)) (format t "gdsada"))
+	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)))
+	 )
  )
 
 (defun praznoMesto()
@@ -148,11 +138,8 @@
 )
 
 (defun proveriValidnostReda(l)
-	; (format t "~a" (car l))
-	; (format t "~a" (car potez))
-	; (format t "~a" (listp (member (car potez) (car l))))
 	(cond 
-		((null (car l)) nil)
+		((null (car l)) '())
 		((listp (member (car potez) (car l))) t)
 		(t (proveriValidnostReda (cdr l)))
 	)
@@ -164,7 +151,7 @@
 
 (defun upisiPotez(s)
 	(cond
-		((not (validanPotez)) (format t "Nevalidan potez, pokusajte ponovo. ~%")(igraj igracNaRedu))
+		((not (validanPotez)) (format t "Nevalidan potez, pokusajte ponovo. ~%") (igraj igracNaRedu))
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
@@ -217,6 +204,5 @@
 		((equal prvi 'covek) (covekIgra))
 	)
 )
-
 
 (start)
