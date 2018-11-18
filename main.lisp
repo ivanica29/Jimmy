@@ -3,9 +3,12 @@
 	(kreirajGlobalnePromenljive)
  	(unosDimenzija)
  	(izborPrvogIgraca)
-	(stampajPrviRed 0)
-	(stampajTablu (generisiTablu dimenzije 0))
   	(setq trenutnoStanjeTable (generisiTablu dimenzije 0))
+
+	(stampajPrviRed 0)
+
+	(stampajTablu trenutnoStanjeTable	)
+	(igraj prviIgrac)
   	;(stampajTablu (generisiTablu dimenzije 0))
  	;(izbor_redosleda)
  	;(defvar tabla)
@@ -25,6 +28,7 @@
  	(defvar igracNaRedu)
  	(defvar trenutniRed)
  	(defvar trenutnaKolona)
+	(defvar potez)
 )
 
 ; ===================
@@ -35,6 +39,10 @@
 (defun unosDimenzija()
 	(format t "Unesite velicinu sestougla: ")
 	(setq dimenzije (read))
+	(cond 
+		((< dimenzije 6) (format t "Dimenzije nisu validne, moraju da budu u intervalu od 6 do 12. Pokusajte ponovo.") (unosDimenzija) )
+		((> dimenzije 12) (format t "Dimenzije nisu validne, moraju da budu u intervalu od 6 do 12. Pokusajte ponovo.") (unosDimenzija) )
+		)
 )
 
 ; ===================
@@ -111,33 +119,56 @@
     (format t "Unesite 0 ako zelite da prvi igra racunar ili unesite 1 ako Vi zelite da igrate prvi:~%")
       (setq prviIgrac (read))
        (cond
-		((equal prviIgrac 0) (progn (setf prviIgrac 'racunar) (setf igracNaRedu 'racunar) (igraj 'racunar)))
-		((equalp prviIgrac 1) (progn (setf prviIgrac 'covek) (setf igracNaRedu 'covek) (igraj 'covek)))
+		((equal prviIgrac 0) (progn (setf prviIgrac 'racunar) (setf igracNaRedu 'racunar)))
+		((equalp prviIgrac 1) (progn (setf prviIgrac 'covek) (setf igracNaRedu 'covek)))
         (t (format t "Pogresno ste uneli prvog igraca, molimo Vas pokusajte ponovo: ~%")(prviIgrac) )
        )
+)
+
+
+; ===================
+; Nevalidan potez
+;====================
+
+(t (and (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)) (proveriValidnostReda trenutnoStanjeTable)))
+
+
+(defun validanPotez()
+	(cond
+		(t (and (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)) (proveriValidnostReda trenutnoStanjeTable)))
+
+	)
+ )
+
+(defun praznoMesto()
+	(cond
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) '_ ) t nil ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) '_ ) t nil ))
+	)
+)
+
+(defun proveriValidnostReda(l)
+	; (format t "~a" (car l))
+	; (format t "~a" (car potez))
+	; (format t "~a" (listp (member (car potez) (car l))))
+	(cond 
+		((null (car l)) nil)
+		((listp (member (car potez) (car l))) t)
+		(t (proveriValidnostReda (cdr l)))
+	)
 )
 
 ; ===================
 ; Igraj
 ;====================
 
-(defun upisiPotez(tmpRed tmpKolona s)
-	(cond ((> tmpRed (nth 0 trenutniRed) '()))
-		((= tmpRed (nth 0 trenutniRed))
-			(if (equal tmpKolona (nth 0 trenutnaKolona))
-				(format t "doso sam ovde")
-				;(setq (aref trenutnoStanjeTable trenutniRed trenutnaKolona) s)
-				;(setq (nth trenutnaKolona (nth trenutniRed trenutnoStanjeTable)) s)
-				
-			; else
-			(upisiPotez tmpRed (+ 1 tmpKolona) s)
-			)
-		)
-		(t (upisiPotez (+ 1 tmpRed) tmpKolona s))
+(defun upisiPotez(s)
+	(cond
+		((not (validanPotez)) (format t "Nevalidan potez, pokusajte ponovo. ~%")(igraj igracNaRedu))
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
-	(format t "~a" tmpRed)
-	(format t "~a" trenutniRed)
-	(format t "~a" (equal tmpRed (nth 0 trenutniRed)))
+	(stampajTablu trenutnoStanjeTable)
 )
 
 
@@ -151,20 +182,33 @@
 	(setq trenutniRed (nadjiRed (car potez)))
 	;(format t "~a" trenutniRed)
 	(setq trenutnaKolona (cdr potez))
-	(upisiPotez 0 0 s)
+	(upisiPotez s)
 )
 
 (defun dodajCovekovPotezUTrenutnoStanje(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotez potez 'X) (dodajPotez potez 'O)))
+		((if (equal igracNaRedu prviIgrac) (dodajPotez potez '"X ") (dodajPotez potez '"O ")))
 	)
 )
 
 (defun covekIgra()
 	(format t "Unesite potez: ")
+		(setq potez (list (read) (read)))
+	(dodajCovekovPotezUTrenutnoStanje potez)
+
+	(setq igracNaRedu 'racunar)
+	(racunarIgra)
+)
+
+(defun racunarIgra()
+	(format t "Unesite potez: ")
 	(defvar potez)
 		(setq potez (list (read) (read)))
 	(dodajCovekovPotezUTrenutnoStanje potez)
+
+
+	(setq igracNaRedu 'covek)
+	(covekIgra)
 )
 
 (defun igraj(prvi)
@@ -173,5 +217,6 @@
 		((equal prvi 'covek) (covekIgra))
 	)
 )
+
 
 (start)
