@@ -14,6 +14,12 @@
 	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
 	(stampajPrviRed 0)
 	(stampajTabluXO trenutnoStanjeO 'O)
+	
+	;;dodato za cvorove
+	(setq listaCvorova (listaSvihCvorova))
+	 (format t "~a " listaCvorova)
+	 (format t "~%")
+	 
 	(igraj prviIgrac)
 )
 
@@ -324,6 +330,90 @@
 		((equal prvi 'racunar) (racunarIgra))
 		((equal prvi 'covek) (covekIgra))
 	)
+)
+;dodato za cvorove
+;;u zavisnosti od prosledjenog reda pronalazi slovo u nizu
+(defun nadjiSlovo(red)
+	(cond
+		(t (car(nth red nizVrednostiSlova)))
+	)
+)
+;primer za 6x6
+ (defun listaKrajnjihCvorova()
+	(setq listaKrajnjih
+	(list (list 'A '0) ;;(A 0)
+		  (list 'A (- dimenzije 1)) ;;(A 5)
+		  (list (nadjiSlovo(- dimenzije 1)) '0) ;;(F 0)
+		  (list (nadjiSlovo(- dimenzije 1)) (-(* dimenzije 2) 2) ) ;;(F 10)
+	      (list (nadjiSlovo(-(* dimenzije 2) 2)) (- dimenzije 1)) ;;(K 5)
+		  (list (nadjiSlovo(-(* dimenzije 2) 2)) (- (* dimenzije 2) 2)) ;;(K 10)
+	)
+	)
+) 
+(defun listaSvihCvorova()
+		(list
+		(listaCvorova_1 0 1 0)
+		(listaCvorova_2 0 dimenzije 0)		
+		(listaCvorova_3 1 0 0)	
+		(listaCvorova_4 dimenzije 1 0)
+		(listaCvorova_5 1 dimenzije 0)	
+		(listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) 0)
+		
+		)
+)
+;prvi red
+(defun listaCvorova_1(tRed tKolona brojac)
+		(cond ((>= brojac (- dimenzije 2)) '())
+		((< brojac (- dimenzije 2))
+			(cons
+			(list (nadjiSlovo tRed) (+ brojac tKolona)) (listaCvorova_1 0 1 (+ brojac 1))
+			))
+		)
+)
+;poslednji red
+(defun listaCvorova_2(tRed tKolona brojac)
+	(cond ((>= brojac (- dimenzije 2)) '())
+	((< brojac (- dimenzije 2))
+		(cons
+		(list (nadjiSlovo (- (* 2 dimenzije) 2)) (+ tKolona brojac)) (listaCvorova_2 0 dimenzije (+ brojac 1))
+		)
+	)
+))
+;B0-E0
+(defun listaCvorova_3(tRed tKolona brojac)
+		(cond ((>= brojac (- dimenzije 2)) '())
+		((< brojac (- dimenzije 2))
+			(cons
+			(list (nadjiSlovo (+ tRed brojac)) tKolona) (listaCvorova_3 1 0 (+ brojac 1))
+			))
+		)
+)
+;g1-j4
+(defun listaCvorova_4(tRed tKolona brojac)
+		(cond ((>= brojac (- dimenzije 2)) '())
+		((< brojac (- dimenzije 2))
+			(cons
+			(list (nadjiSlovo (+ tRed brojac)) (+ brojac tKolona)) (listaCvorova_4 dimenzije 1 (+ brojac 1))
+			))
+		)
+)
+;b6-e9
+(defun listaCvorova_5(tRed tKolona brojac)
+		(cond ((>= brojac (- dimenzije 2)) '())
+		((< brojac (- dimenzije 2))
+			(cons
+			(list (nadjiSlovo (+ tRed brojac)) (+ brojac tKolona)) (listaCvorova_5 1 dimenzije (+ brojac 1))
+			))
+		)
+)
+;f10-j10
+(defun listaCvorova_6(tRed tKolona brojac)
+		(cond ((>= brojac (- dimenzije 2)) '())
+		((< brojac (- dimenzije 2))
+			(cons
+			(list (nadjiSlovo (+ tRed brojac)) tKolona) (listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) (+ brojac 1))
+			))
+		)
 )
 
 
