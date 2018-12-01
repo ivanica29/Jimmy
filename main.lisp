@@ -3,12 +3,20 @@
 	(kreirajGlobalnePromenljive)
  	(unosDimenzija)
  	(izborPrvogIgraca)
+	
   	(setq trenutnoStanjeTable (generisiTablu dimenzije 0))
-
+	(setq istorijaTable (generisiListuTabla trenutnoStanjeTable))
 	(stampajPrviRed 0)
-
-	(stampajTablu trenutnoStanjeTable	)
-	(igraj prviIgrac)4r/
+	(stampajTablu istorijaTable)
+	
+	(setq trenutnoStanjeX (generisiTabluX dimenzije 0))
+	(stampajPrviRed 0)
+	(stampajTabluX trenutnoStanjeX)
+	
+	(setq trenutnoStanjeO (generisiTabluO dimenzije 0))
+	(stampajPrviRed 0)
+	(stampajTabluO trenutnoStanjeO)
+	(igraj prviIgrac)
 )
 
 (defun kreirajGlobalnePromenljive()
@@ -18,6 +26,7 @@
   	(defvar nizVrednostiSlova)
   		(setq nizVrednostiSlova '((A 0) (B 1) (C 2) (D 3) (E 4) (F 5) (G 6) (H 7) (I 8) (J 9) (K 10) (L 11) (M 12) (N 13) (O 14) (P 15) (Q 16) (R 17) (S 18) (T 19) (U 20) (V 21) (W 22) (X 23) (Y 24) (Z 25)))
   	(defvar trenutnoStanjeTable)
+	(defvar istorijaTable)
   	(defvar prviIgrac)
  	(defvar igracNaRedu)
  	(defvar trenutniRed)
@@ -48,6 +57,16 @@
 		(t (append (list '_) (dodajCrte (- br 1))))
 	)
 )
+(defun dodajX(br)
+	(cond ((equal 0 br) '())
+		(t (append (list 'X) (dodajX (- br 1))))
+	)
+)
+(defun dodajO(br)
+	(cond ((equal 0 br) '())
+		(t (append (list 'O) (dodajO (- br 1))))
+	)
+)
 
 (defun dodajNule(br)
 	(cond ((equal 0 br) '())
@@ -73,6 +92,17 @@
 			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajCrte br) (dodajPoslednjiBroj red)))
 		)
 )
+(defun generisiRedX(br red)
+		(cond
+			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajX br) (dodajPoslednjiBroj red)))
+		)
+)
+(defun generisiRedO(br red)
+		(cond
+			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajO br) (dodajPoslednjiBroj red)))
+		)
+)
+
 
 (defun generisiTablu(n tmp)
 	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
@@ -81,12 +111,41 @@
 		((> tmp (- dimenzije 1)) (append (list (generisiRed n tmp)) (generisiTablu (- n 1) (+ 1 tmp))))
 	)
 )
+(defun generisiTabluX(n tmp)
+	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
+		((equal tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (- n 1) (+ 1 tmp))))
+		((< tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (+ n 1) (+ 1 tmp))))
+		((> tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (- n 1) (+ 1 tmp))))
+	)
+)
+(defun generisiTabluO(n tmp)
+	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
+		((equal tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (- n 1) (+ 1 tmp))))
+		((< tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (+ n 1) (+ 1 tmp))))
+		((> tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (- n 1) (+ 1 tmp))))
+	)
+)
+
 
 (defun stampajRed(l)
 	(cond ((null (car l)) (format t "~%"))
 			((equal 0 (car l)) (format t " ") (stampajRed (cdr l)))
 			((equal '_ (car l)) (format t "_ ") (stampajRed (cdr l)))
 			(t (format t "~a" (car l)) (stampajRed (cdr l)))
+	)
+)
+(defun stampajRedX(l)
+	(cond ((null (car l)) (format t "~%"))
+			((equal 0 (car l)) (format t " ") (stampajRedX (cdr l)))
+			((equal 'X (car l)) (format t "X ") (stampajRedX (cdr l)))
+			(t (format t "~a" (car l)) (stampajRedX (cdr l)))
+	)
+)
+(defun stampajRedO(l)
+	(cond ((null (car l)) (format t "~%"))
+			((equal 0 (car l)) (format t " ") (stampajRedO (cdr l)))
+			((equal 'O (car l)) (format t "O ") (stampajRedO (cdr l)))
+			(t (format t "~a" (car l)) (stampajRedO (cdr l)))
 	)
 )
 
@@ -99,9 +158,22 @@
 	)
 )
 
+(defun generisiListuTabla(tabla)
+	(append tabla)
+)
 (defun stampajTablu(l)
 	(cond ((null (car l)))
 			(t (stampajRed (car l)) (stampajTablu (cdr l)))
+	)
+)
+(defun stampajTabluX (l)
+		(cond ((null (car l)))
+			(t (stampajRedX (car l)) (stampajTabluX (cdr l)))
+	)
+)
+(defun stampajTabluO (l)
+		(cond ((null (car l)))
+			(t (stampajRedO (car l)) (stampajTabluO (cdr l)))
 	)
 )
 
@@ -125,7 +197,22 @@
 (defun validanPotez()
 	 (cond
 	 	((not (proveriValidnostReda trenutnoStanjeTable)) (format t "Nepostojeci red!~%"))
-	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t)) (if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)))
+	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t))
+		(if(not (praznoMesto)) (format t "Mesto je zauzeto!~%") t)))
+	 )
+ )
+ (defun validanPotezX()
+	 (cond
+	 	((not (proveriValidnostReda trenutnoStanjeX)) (format t "Nepostojeci red!~%"))
+	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t))
+		(if(not (praznoMestoX)) (format t "Mesto je zauzeto!~%") t)))
+	 )
+ )
+ (defun validanPotezO()
+	 (cond
+	 	((not (proveriValidnostReda trenutnoStanjeO)) (format t "Nepostojeci red!~%"))
+	 	(t (and ( and (if(< (nth 0 trenutnaKolona) 0) nil t) (if (> (nth 0 trenutnaKolona) (+ (nth 0 trenutniRed) (- dimenzije 1))) nil t))
+		(if(not (praznoMestoO)) (format t "Mesto je zauzeto!~%") t)))
 	 )
  )
 
@@ -133,6 +220,18 @@
 	(cond
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) '_ ) t nil ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) '_ ) t nil ))
+	)
+)
+(defun praznoMestoX()
+	(cond
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeX)) 'X ) t nil ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeX)) 'X ) t nil ))
+	)
+)
+(defun praznoMestoO()
+	(cond
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeO)) 'O ) t nil ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (if (equal (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeO)) 'O ) t nil ))
 	)
 )
 
@@ -157,6 +256,24 @@
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 )
+ (defun upisiPotezX(s)
+	(cond
+		((not (validanPotezX)) (format t "Nevalidan potez, pokusajte ponovo. ~%") (igraj igracNaRedu))
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
+	)
+	(stampajPrviRed 0)
+	(stampajTabluX trenutnoStanjeX)
+)
+ (defun upisiPotezO(s)
+	(cond
+		((not (validanPotezO)) (format t "Nevalidan potez, pokusajte ponovo. ~%") (igraj igracNaRedu))
+		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
+		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
+	)
+	(stampajPrviRed 0)
+	(stampajTabluO trenutnoStanjeO)
+)
 
 
 (defun nadjiRed(slovo)
@@ -167,14 +284,40 @@
 
 (defun dodajPotez(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
-	;(format t "~a" trenutniRed)
 	(setq trenutnaKolona (cdr potez))
+	;provera ciljnog cvora
 	(upisiPotez s)
+	;(listaKrajnjihCvorova )
 )
+(defun dodajPotezX(potez s)
+	(setq trenutniRed (nadjiRed (car potez)))
+	(setq trenutnaKolona (cdr potez))
+	;provera ciljnog cvora
+	(upisiPotezX s)
+	;(listaKrajnjihCvorova )
+)
+(defun dodajPotezO(potez s)
+	(setq trenutniRed (nadjiRed (car potez)))
+	(setq trenutnaKolona (cdr potez))
+	;provera ciljnog cvora
+	(upisiPotezO s)
+	;(listaKrajnjihCvorova )
+)
+
 
 (defun dodajCovekovPotezUTrenutnoStanje(potez)
 	(cond
 		((if (equal igracNaRedu prviIgrac) (dodajPotez potez '"X ") (dodajPotez potez '"O ")))
+	)
+)
+(defun dodajCovekovPotezUTrenutnoStanjeX(potez)
+	(cond
+		((if (equal igracNaRedu prviIgrac) (dodajPotezX potez '"-1 ") (dodajPotezX potez '"-1 ")))
+	)
+)
+(defun dodajCovekovPotezUTrenutnoStanjeO(potez)
+	(cond
+		((if (equal igracNaRedu prviIgrac) (dodajPotezO potez '"-1 ") (dodajPotezO potez '"-1 ")))
 	)
 )
 
@@ -182,7 +325,8 @@
 	(format t "Unesite potez: ")
 		(setq potez (list (read) (read)))
 	(dodajCovekovPotezUTrenutnoStanje potez)
-
+	(dodajCovekovPotezUTrenutnoStanjeX potez)
+	(dodajCovekovPotezUTrenutnoStanjeO potez)
 	(setq igracNaRedu 'racunar)
 	(racunarIgra)
 )
@@ -192,6 +336,8 @@
 	(defvar potez)
 		(setq potez (list (read) (read)))
 	(dodajCovekovPotezUTrenutnoStanje potez)
+	(dodajCovekovPotezUTrenutnoStanjeX potez)
+	(dodajCovekovPotezUTrenutnoStanjeO potez)
 
 
 	(setq igracNaRedu 'covek)
@@ -204,5 +350,6 @@
 		((equal prvi 'covek) (covekIgra))
 	)
 )
+
 
 (start)
