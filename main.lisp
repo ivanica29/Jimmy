@@ -5,17 +5,16 @@
  	(izborPrvogIgraca)
 	
   	(setq trenutnoStanjeTable (generisiTablu dimenzije 0))
-	(setq istorijaTable (generisiListuTabla trenutnoStanjeTable))
 	(stampajPrviRed 0)
-	(stampajTablu istorijaTable)
+	(stampajTablu trenutnoStanjeTable	)
 	
-	(setq trenutnoStanjeX (generisiTabluX dimenzije 0))
+	(setq trenutnoStanjeX (generisiTabluX dimenzije 0 'X))
 	(stampajPrviRed 0)
-	(stampajTabluX trenutnoStanjeX)
+	(stampajTabluXO trenutnoStanjeX 'X)
 	
-	(setq trenutnoStanjeO (generisiTabluO dimenzije 0))
+	(setq trenutnoStanjeO (generisiTabluX dimenzije 0 'O))
 	(stampajPrviRed 0)
-	(stampajTabluO trenutnoStanjeO)
+	(stampajTabluXO trenutnoStanjeO 'O)
 	(igraj prviIgrac)
 )
 
@@ -26,7 +25,6 @@
   	(defvar nizVrednostiSlova)
   		(setq nizVrednostiSlova '((A 0) (B 1) (C 2) (D 3) (E 4) (F 5) (G 6) (H 7) (I 8) (J 9) (K 10) (L 11) (M 12) (N 13) (O 14) (P 15) (Q 16) (R 17) (S 18) (T 19) (U 20) (V 21) (W 22) (X 23) (Y 24) (Z 25)))
   	(defvar trenutnoStanjeTable)
-	(defvar istorijaTable)
   	(defvar prviIgrac)
  	(defvar igracNaRedu)
  	(defvar trenutniRed)
@@ -57,14 +55,14 @@
 		(t (append (list '_) (dodajCrte (- br 1))))
 	)
 )
-(defun dodajX(br)
+
+
+;;**********************
+(defun dodajZnak (br s) 
 	(cond ((equal 0 br) '())
-		(t (append (list 'X) (dodajX (- br 1))))
-	)
-)
-(defun dodajO(br)
-	(cond ((equal 0 br) '())
-		(t (append (list 'O) (dodajO (- br 1))))
+		((if (equal s 'X) (append (list 'X) (dodajZnak (- br 1) s)) '()))
+		((if (equal s 'O) (append (list 'O) (dodajZnak (- br 1) s)) '()))
+		(t (append (list s) (dodajZnak (- br 1) s)))
 	)
 )
 
@@ -89,20 +87,19 @@
 
 (defun generisiRed(br red)
 		(cond
-			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajCrte br) (dodajPoslednjiBroj red)))
-		)
-)
-(defun generisiRedX(br red)
-		(cond
-			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajX br) (dodajPoslednjiBroj red)))
-		)
-)
-(defun generisiRedO(br red)
-		(cond
-			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajO br) (dodajPoslednjiBroj red)))
+			(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajCrte br ) (dodajPoslednjiBroj red)))
 		)
 )
 
+
+;*****************************
+(defun generisiRedXO(br red s)
+		(cond
+			((if (equal s 'X) (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajZnak br 'X) (dodajPoslednjiBroj red))))
+			((if (equal s 'O) (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajZnak br 'O) (dodajPoslednjiBroj red))))
+		(t (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajZnak br s) (dodajPoslednjiBroj red)))
+		)
+)
 
 (defun generisiTablu(n tmp)
 	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
@@ -111,20 +108,21 @@
 		((> tmp (- dimenzije 1)) (append (list (generisiRed n tmp)) (generisiTablu (- n 1) (+ 1 tmp))))
 	)
 )
-(defun generisiTabluX(n tmp)
-	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
-		((equal tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (- n 1) (+ 1 tmp))))
-		((< tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (+ n 1) (+ 1 tmp))))
-		((> tmp (- dimenzije 1)) (append (list (generisiRedX n tmp)) (generisiTabluX (- n 1) (+ 1 tmp))))
+;*******************************
+(defun generisiTabluX(n tmp s)
+	(cond 
+		((equal tmp (- (* dimenzije 2) 1)) '())
+		((and(equal tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
+		((and(< tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (+ n 1) (+ 1 tmp) s)))
+		((and(> tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
+		
+		((and(equal tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
+		((and(< tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (+ n 1) (+ 1 tmp) s)))
+		((and(> tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
 	)
 )
-(defun generisiTabluO(n tmp)
-	(cond ((equal tmp (- (* dimenzije 2) 1)) '())
-		((equal tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (- n 1) (+ 1 tmp))))
-		((< tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (+ n 1) (+ 1 tmp))))
-		((> tmp (- dimenzije 1)) (append (list (generisiRedO n tmp)) (generisiTabluO (- n 1) (+ 1 tmp))))
-	)
-)
+
+
 
 
 (defun stampajRed(l)
@@ -134,20 +132,21 @@
 			(t (format t "~a" (car l)) (stampajRed (cdr l)))
 	)
 )
-(defun stampajRedX(l)
+
+;****************
+(defun stampajRedXO(l s)
 	(cond ((null (car l)) (format t "~%"))
-			((equal 0 (car l)) (format t " ") (stampajRedX (cdr l)))
-			((equal 'X (car l)) (format t "X ") (stampajRedX (cdr l)))
-			(t (format t "~a" (car l)) (stampajRedX (cdr l)))
+			((and(equal 0 (car l))(equal s 'X)) (format t " ") (stampajRedXO (cdr l) s))
+			((and(equal 'X (car l))(equal s 'X)) (format t "X ") (stampajRedXO (cdr l) s))
+			
+			((and(equal 0 (car l))(equal s 'O)) (format t " ") (stampajRedXO (cdr l) s))
+			((and(equal 'O (car l))(equal s 'O)) (format t "O ") (stampajRedXO (cdr l) s))
+			
+		(t (format t "~a" (car l)) (stampajRedXO (cdr l) s))
 	)
 )
-(defun stampajRedO(l)
-	(cond ((null (car l)) (format t "~%"))
-			((equal 0 (car l)) (format t " ") (stampajRedO (cdr l)))
-			((equal 'O (car l)) (format t "O ") (stampajRedO (cdr l)))
-			(t (format t "~a" (car l)) (stampajRedO (cdr l)))
-	)
-)
+
+
 
 (defun stampajPrviRed(tmp)
 	(cond ((equal tmp (* 2 dimenzije)) (format t "~%"))
@@ -158,24 +157,22 @@
 	)
 )
 
-(defun generisiListuTabla(tabla)
-	(append tabla)
-)
 (defun stampajTablu(l)
 	(cond ((null (car l)))
 			(t (stampajRed (car l)) (stampajTablu (cdr l)))
 	)
 )
-(defun stampajTabluX (l)
-		(cond ((null (car l)))
-			(t (stampajRedX (car l)) (stampajTabluX (cdr l)))
+
+;**********
+(defun stampajTabluXO (l s)
+	(cond ((null (car l)))
+		((equal s 'X) (stampajRedXO (car l) 'X) (stampajTabluXO (cdr l) s))
+		((equal s 'O) (stampajRedXO (car l) 'O)(stampajTabluXO (cdr l) s))
+		
+	(t (stampajRedXO (car l) s) (stampajTabluXO (cdr l) s))
 	)
 )
-(defun stampajTabluO (l)
-		(cond ((null (car l)))
-			(t (stampajRedO (car l)) (stampajTabluO (cdr l)))
-	)
-)
+
 
 ; ===================
 ; Ko prvi igra
@@ -263,7 +260,7 @@
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
 	)
 	(stampajPrviRed 0)
-	(stampajTabluX trenutnoStanjeX)
+	(stampajTabluXO trenutnoStanjeX 'X)
 )
  (defun upisiPotezO(s)
 	(cond
@@ -272,7 +269,7 @@
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
 	)
 	(stampajPrviRed 0)
-	(stampajTabluO trenutnoStanjeO)
+	(stampajTabluXO trenutnoStanjeO 'O)
 )
 
 
@@ -281,7 +278,6 @@
 		(t (cdr (assoc slovo nizVrednostiSlova)))
 	)
 )
-
 (defun dodajPotez(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
@@ -303,7 +299,6 @@
 	(upisiPotezO s)
 	;(listaKrajnjihCvorova )
 )
-
 
 (defun dodajCovekovPotezUTrenutnoStanje(potez)
 	(cond
