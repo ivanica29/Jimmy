@@ -1,4 +1,3 @@
-;;caooos
 (defun start()
 	(kreirajGlobalnePromenljive)
  	(unosDimenzija)
@@ -8,11 +7,11 @@
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable	)
 	
-	(setq trenutnoStanjeX (generisiTabluX dimenzije 0 'X))
+	(setq trenutnoStanjeX (generisiTabluXO dimenzije 0 'X))
 	(stampajPrviRed 0)
 	(stampajTabluXO trenutnoStanjeX 'X)
 	
-	(setq trenutnoStanjeO (generisiTabluX dimenzije 0 'O))
+	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
 	(stampajPrviRed 0)
 	(stampajTabluXO trenutnoStanjeO 'O)
 	(igraj prviIgrac)
@@ -56,8 +55,6 @@
 	)
 )
 
-
-;;**********************
 (defun dodajZnak (br s) 
 	(cond ((equal 0 br) '())
 		((if (equal s 'X) (append (list 'X) (dodajZnak (- br 1) s)) '()))
@@ -91,8 +88,6 @@
 		)
 )
 
-
-;*****************************
 (defun generisiRedXO(br red s)
 		(cond
 			((if (equal s 'X) (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br)) (dodajZnak br 'X) (dodajPoslednjiBroj red))))
@@ -108,22 +103,19 @@
 		((> tmp (- dimenzije 1)) (append (list (generisiRed n tmp)) (generisiTablu (- n 1) (+ 1 tmp))))
 	)
 )
-;*******************************
-(defun generisiTabluX(n tmp s)
+
+(defun generisiTabluXO(n tmp s)
 	(cond 
 		((equal tmp (- (* dimenzije 2) 1)) '())
-		((and(equal tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
-		((and(< tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (+ n 1) (+ 1 tmp) s)))
-		((and(> tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
+		((and(equal tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluXO (- n 1) (+ 1 tmp) s)))
+		((and(< tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluXO (+ n 1) (+ 1 tmp) s)))
+		((and(> tmp (- dimenzije 1))(equal s 'X)) (append (list (generisiRedXO n tmp 'X)) (generisiTabluXO (- n 1) (+ 1 tmp) s)))
 		
-		((and(equal tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
-		((and(< tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (+ n 1) (+ 1 tmp) s)))
-		((and(> tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluX (- n 1) (+ 1 tmp) s)))
+		((and(equal tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluXO (- n 1) (+ 1 tmp) s)))
+		((and(< tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluXO (+ n 1) (+ 1 tmp) s)))
+		((and(> tmp (- dimenzije 1))(equal s 'O)) (append (list (generisiRedXO n tmp 'O)) (generisiTabluXO (- n 1) (+ 1 tmp) s)))
 	)
 )
-
-
-
 
 (defun stampajRed(l)
 	(cond ((null (car l)) (format t "~%"))
@@ -133,7 +125,6 @@
 	)
 )
 
-;****************
 (defun stampajRedXO(l s)
 	(cond ((null (car l)) (format t "~%"))
 			((and(equal 0 (car l))(equal s 'X)) (format t " ") (stampajRedXO (cdr l) s))
@@ -145,8 +136,6 @@
 		(t (format t "~a" (car l)) (stampajRedXO (cdr l) s))
 	)
 )
-
-
 
 (defun stampajPrviRed(tmp)
 	(cond ((equal tmp (* 2 dimenzije)) (format t "~%"))
@@ -163,7 +152,6 @@
 	)
 )
 
-;**********
 (defun stampajTabluXO (l s)
 	(cond ((null (car l)))
 		((equal s 'X) (stampajRedXO (car l) 'X) (stampajTabluXO (cdr l) s))
@@ -172,7 +160,6 @@
 	(t (stampajRedXO (car l) s) (stampajTabluXO (cdr l) s))
 	)
 )
-
 
 ; ===================
 ; Ko prvi igra
@@ -272,7 +259,6 @@
 	(stampajTabluXO trenutnoStanjeO 'O)
 )
 
-
 (defun nadjiRed(slovo)
 	(cond
 		(t (cdr (assoc slovo nizVrednostiSlova)))
@@ -281,23 +267,18 @@
 (defun dodajPotez(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
-	;provera ciljnog cvora
 	(upisiPotez s)
-	;(listaKrajnjihCvorova )
 )
+	
 (defun dodajPotezX(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
-	;provera ciljnog cvora
 	(upisiPotezX s)
-	;(listaKrajnjihCvorova )
 )
 (defun dodajPotezO(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
-	;provera ciljnog cvora
 	(upisiPotezO s)
-	;(listaKrajnjihCvorova )
 )
 
 (defun dodajCovekovPotezUTrenutnoStanje(potez)
@@ -307,12 +288,12 @@
 )
 (defun dodajCovekovPotezUTrenutnoStanjeX(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotezX potez '"-1 ") (dodajPotezX potez '"-1 ")))
+		((if (equal igracNaRedu prviIgrac) (dodajPotezX potez '"1 ") (dodajPotezX potez '"-1 ")))
 	)
 )
 (defun dodajCovekovPotezUTrenutnoStanjeO(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotezO potez '"-1 ") (dodajPotezO potez '"-1 ")))
+		((if (equal igracNaRedu prviIgrac) (dodajPotezO potez '"-1 ") (dodajPotezO potez '"1 ")))
 	)
 )
 
@@ -333,7 +314,6 @@
 	(dodajCovekovPotezUTrenutnoStanje potez)
 	(dodajCovekovPotezUTrenutnoStanjeX potez)
 	(dodajCovekovPotezUTrenutnoStanjeO potez)
-
 
 	(setq igracNaRedu 'covek)
 	(covekIgra)
