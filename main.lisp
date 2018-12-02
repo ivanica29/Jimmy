@@ -8,19 +8,23 @@
 	(stampajTablu trenutnoStanjeTable	)
 	
 	(setq trenutnoStanjeX (generisiTabluXO dimenzije 0 'X))
-	(stampajPrviRed 0)
-	(stampajTabluXO trenutnoStanjeX 'X)
+	; (stampajPrviRed 0)
+	; (stampajTabluXO trenutnoStanjeX 'X)
 	
 	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
-	(stampajPrviRed 0)
-	(stampajTabluXO trenutnoStanjeO 'O)
+	; (stampajPrviRed 0)
+	; (stampajTabluXO trenutnoStanjeO 'O)
 	
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
-	 (format t "~a " listaCvorova)
-	 (format t "~%")
-	 
+	 ;(format t "~a " listaCvorova)
+	; (format t "~%")
+
+	;(format t "~a" (dodajCvorUGrafuSuseda '(F 5)))
+
+
 	(igraj prviIgrac)
+
 )
 
 (defun kreirajGlobalnePromenljive()
@@ -35,6 +39,12 @@
  	(defvar trenutniRed)
  	(defvar trenutnaKolona)
 	(defvar potez)
+	(defvar grafSuseda)
+		(setq grafSuseda '())
+	(defvar listaPotezaX)
+		(setq listaPotezaX '())
+	(defvar listaPotezaO)
+		(setq listaPotezaO '())
 )
 
 ; ===================
@@ -127,7 +137,7 @@
 	(cond ((null (car l)) (format t "~%"))
 			((equal 0 (car l)) (format t " ") (stampajRed (cdr l)))
 			((equal '_ (car l)) (format t "_ ") (stampajRed (cdr l)))
-			(t (format t "~a" (car l)) (stampajRed (cdr l)))
+			(t (format t "~a " (car l)) (stampajRed (cdr l)))
 	)
 )
 
@@ -154,7 +164,7 @@
 
 (defun stampajTablu(l)
 	(cond ((null (car l)))
-			(t (stampajRed (car l)) (stampajTablu (cdr l)))
+			(t (stampajRed (car l)) (stampajTablu (cdr l)) )
 	)
 )
 
@@ -243,6 +253,8 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
+	(dodajCvorUListuPoteza s)
+	(dodajCvorUGrafuSuseda potez)
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 )
@@ -252,8 +264,8 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
 	)
-	(stampajPrviRed 0)
-	(stampajTabluXO trenutnoStanjeX 'X)
+	;(stampajPrviRed 0)
+	;(stampajTabluXO trenutnoStanjeX 'X)
 )
  (defun upisiPotezO(s)
 	(cond
@@ -261,8 +273,8 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
 	)
-	(stampajPrviRed 0)
-	(stampajTabluXO trenutnoStanjeO 'O)
+	;(stampajPrviRed 0)
+	;(stampajTabluXO trenutnoStanjeO 'O)
 )
 
 (defun nadjiRed(slovo)
@@ -270,6 +282,15 @@
 		(t (cdr (assoc slovo nizVrednostiSlova)))
 	)
 )
+
+;dodato za cvorove
+;;u zavisnosti od prosledjenog reda pronalazi slovo u nizu
+(defun nadjiSlovo(red)
+	(cond
+		(t (car(nth red nizVrednostiSlova)))
+	)
+)
+
 (defun dodajPotez(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
@@ -289,17 +310,18 @@
 
 (defun dodajCovekovPotezUTrenutnoStanje(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotez potez '"X ") (dodajPotez potez '"O ")))
+		((if (equal igracNaRedu prviIgrac) (dodajPotez potez 'X) (dodajPotez potez 'O)))
 	)
+
 )
 (defun dodajCovekovPotezUTrenutnoStanjeX(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotezX potez '"1 ") (dodajPotezX potez '"-1 ")))
+		((if (equal igracNaRedu prviIgrac) (dodajPotezX potez '1) (dodajPotezX potez '-1)))
 	)
 )
 (defun dodajCovekovPotezUTrenutnoStanjeO(potez)
 	(cond
-		((if (equal igracNaRedu prviIgrac) (dodajPotezO potez '"-1 ") (dodajPotezO potez '"1 ")))
+		((if (equal igracNaRedu prviIgrac) (dodajPotezO potez '-1) (dodajPotezO potez '1)))
 	)
 )
 
@@ -331,13 +353,12 @@
 		((equal prvi 'covek) (covekIgra))
 	)
 )
-;dodato za cvorove
-;;u zavisnosti od prosledjenog reda pronalazi slovo u nizu
-(defun nadjiSlovo(red)
-	(cond
-		(t (car(nth red nizVrednostiSlova)))
-	)
-)
+
+
+; ===================
+; Stranice
+;====================
+
 ;primer za 6x6
  (defun listaKrajnjihCvorova()
 	(setq listaKrajnjih
@@ -417,4 +438,63 @@
 )
 
 
+; ===================
+; Susedi
+;====================
+
+(defun nadjiPotencijalneSusede(cvor)
+	(cond
+		(t (append (nadjiGornjePotencijalneSusede cvor) (nadjiLevogIDesnogPotencijalnogSuseda cvor) (nadjiDonjePotencijalneSusede cvor)))
+	)	
+)
+
+(defun nadjiGornjePotencijalneSusede(cvor)
+	(setq tmpBroj (nadjiRed (car cvor)))
+	(setq tmpBroj (- (car tmpBroj) 1))
+	(setq tmpSlovo (nadjiSlovo tmpBroj))
+	(cond
+		(t (list (list tmpSlovo (- (nth 0 (cdr cvor)) 1))	(list tmpSlovo (nth 0 (cdr cvor)))))
+	)
+)
+
+(defun nadjiDonjePotencijalneSusede(cvor)
+	(setq tmpBroj (nadjiRed (car cvor)))
+	(setq tmpBroj (+ (car tmpBroj) 1))
+	(setq tmpSlovo (nadjiSlovo tmpBroj))
+	(cond
+		(t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))
+	)	
+)
+
+(defun nadjiLevogIDesnogPotencijalnogSuseda(cvor)
+	(cond
+		(t (list (list (car cvor) (- (nth 0 (cdr cvor)) 1))	(list (car cvor) (+ (nth 0 (cdr cvor)) 1))))
+	)
+)
+
+(defun nadjiSusede(l)
+	(cond
+		((member (car l) 	))
+	)
+)
+
+(defun dodajCvorUListuPoteza(s)
+	(cond
+		((equal s 'X) (append listaPotezaX 'O))
+		((equal s 'O) (append listaPotezaO potez))
+	)
+	(format t "~% ~% ~% ~a" listaPotezaX)
+)
+
+(defun dodajCvorUGrafuSuseda(cvor)
+	
+
+	; (setq tmpPotencijalniSusedi (nadjiPotencijalneSusede cvor))
+
+	; (cond
+	; 	(t (format t "~% ~% ~% ~a" listaPotezaX))
+	; )
+)
+
 (start)
+
