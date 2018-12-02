@@ -14,7 +14,8 @@
 	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
 	; (stampajPrviRed 0)
 	; (stampajTabluXO trenutnoStanjeO 'O)
-	
+	(setq listaPotezaX '())
+	(setq listaPotezaO '())
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
 	 ;(format t "~a " listaCvorova)
@@ -42,9 +43,9 @@
 	(defvar grafSuseda)
 		(setq grafSuseda '())
 	(defvar listaPotezaX)
-		(setq listaPotezaX '())
+		;(setq listaPotezaX '())
 	(defvar listaPotezaO)
-		(setq listaPotezaO '())
+		;(setq listaPotezaO '())
 )
 
 ; ===================
@@ -254,7 +255,7 @@
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
 	(dodajCvorUListuPoteza s)
-	(dodajCvorUGrafuSuseda potez)
+	;(dodajCvorUGrafuSuseda potez)
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 )
@@ -294,6 +295,7 @@
 (defun dodajPotez(potez s)
 	(setq trenutniRed (nadjiRed (car potez)))
 	(setq trenutnaKolona (cdr potez))
+	(dodajCvorUListuPoteza potez s)
 	(upisiPotez s)
 )
 	
@@ -478,12 +480,16 @@
 	)
 )
 
-(defun dodajCvorUListuPoteza(s)
+(defun dodajCvorUListuPoteza(potezz s)
 	(cond
-		((equal s 'X) (append listaPotezaX 'O))
-		((equal s 'O) (append listaPotezaO potez))
+		; ((equal s 'X) (append listaPotezaX 'O))
+		; ((equal s 'O) (append listaPotezaO potez))
+		((equal s 'X) (setq listaPotezaX (append (list listaPotezaX) potezz)))
+		((equal s 'O) (setq listaPotezaO (append listaPotezaO potezz)))
 	)
-	(format t "~% ~% ~% ~a" listaPotezaX)
+	(format t "~% ~% ~a" listaPotezaX)
+	(format t "~% ~% ~a" listaPotezaO)
+	(format t "~% ~%")
 )
 
 (defun dodajCvorUGrafuSuseda(cvor)
