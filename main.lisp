@@ -96,8 +96,8 @@
 
 (defun generisiRedXO(br red s)
 		(cond
-			((if (equal s 'X) (append (dodajSlovo red) (dodajZnak br 'X))))
-			((if (equal s 'O) (append (dodajSlovo red) (dodajZnak br 'O))))
+			((if (equal s 'X) (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br))(dodajZnak br 'X)(dodajPoslednjiBroj red))))
+			((if (equal s 'O) (append (dodajSlovo red) (dodajNule (- (* dimenzije 2) br))(dodajZnak br 'O)(dodajPoslednjiBroj red))))
 		(t (append (dodajSlovo red)(dodajZnak br s)))
 		)
 )
