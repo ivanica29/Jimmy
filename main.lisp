@@ -297,6 +297,11 @@
 	(setq trenutnaKolona (cdr potez))
 	(dodajCvorUListuPoteza potez s)
 	(upisiPotez s)
+
+	(setq tmp (nadjiPotencijalneSusede '(F 5)))
+	(format t "~%~a~%" tmp)
+	(format t "~a" (nadjiSusede tmp))
+	(format t "~%~a" listaPotezaX)
 )
 	
 (defun dodajPotezX(potez s)
@@ -355,6 +360,63 @@
 		((equal prvi 'covek) (covekIgra))
 	)
 )
+
+; ===================
+; Susedi
+;====================
+
+(defun nadjiPotencijalneSusede(cvor)
+	(cond
+		(t (append (nadjiGornjePotencijalneSusede cvor) (nadjiLevogIDesnogPotencijalnogSuseda cvor) (nadjiDonjePotencijalneSusede cvor)))
+	)	
+)
+
+(defun nadjiGornjePotencijalneSusede(cvor)
+	(setq tmpBroj (nadjiRed (car cvor)))
+	(setq tmpBroj (- (car tmpBroj) 1))
+	(setq tmpSlovo (nadjiSlovo tmpBroj))
+	(cond
+		(t (list (list tmpSlovo (- (nth 0 (cdr cvor)) 1))	(list tmpSlovo (nth 0 (cdr cvor)))))
+	)
+)
+
+(defun nadjiDonjePotencijalneSusede(cvor)
+	(setq tmpBroj (nadjiRed (car cvor)))
+	(setq tmpBroj (+ (car tmpBroj) 1))
+	(setq tmpSlovo (nadjiSlovo tmpBroj))
+	(cond
+		(t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))
+	)	
+)
+
+(defun nadjiLevogIDesnogPotencijalnogSuseda(cvor)
+	(cond
+		(t (list (list (car cvor) (- (nth 0 (cdr cvor)) 1))	(list (car cvor) (+ (nth 0 (cdr cvor)) 1))))
+	)
+)
+
+(defun nadjiSusede(potencijalniSusedi)
+	(cond
+		((null (car potencijalniSusedi)) '())
+		((member (car potencijalniSusedi) listaPotezaX) (format t "Doso sam ovde"))
+		(t (nadjiSusede (cdr potencijalniSusedi)))
+	)
+)
+
+(defun dodajCvorUListuPoteza(potezz s)
+	(cond
+		((equal s 'X) (setq listaPotezaX (append listaPotezaX (list potez))))
+		((equal s 'O) (setq listaPotezaO (append listaPotezaO (list potez))))
+	)
+	;(format t "~% ~% ~a" listaPotezaX)
+	;(format t "~% ~% ~a" listaPotezaO)
+	;(format t "~% ~%")
+)
+
+(defun dodajCvorUGrafuSuseda(cvor)
+
+)
+
 
 
 ; ===================
@@ -439,66 +501,6 @@
 		)
 )
 
-
-; ===================
-; Susedi
-;====================
-
-(defun nadjiPotencijalneSusede(cvor)
-	(cond
-		(t (append (nadjiGornjePotencijalneSusede cvor) (nadjiLevogIDesnogPotencijalnogSuseda cvor) (nadjiDonjePotencijalneSusede cvor)))
-	)	
-)
-
-(defun nadjiGornjePotencijalneSusede(cvor)
-	(setq tmpBroj (nadjiRed (car cvor)))
-	(setq tmpBroj (- (car tmpBroj) 1))
-	(setq tmpSlovo (nadjiSlovo tmpBroj))
-	(cond
-		(t (list (list tmpSlovo (- (nth 0 (cdr cvor)) 1))	(list tmpSlovo (nth 0 (cdr cvor)))))
-	)
-)
-
-(defun nadjiDonjePotencijalneSusede(cvor)
-	(setq tmpBroj (nadjiRed (car cvor)))
-	(setq tmpBroj (+ (car tmpBroj) 1))
-	(setq tmpSlovo (nadjiSlovo tmpBroj))
-	(cond
-		(t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))
-	)	
-)
-
-(defun nadjiLevogIDesnogPotencijalnogSuseda(cvor)
-	(cond
-		(t (list (list (car cvor) (- (nth 0 (cdr cvor)) 1))	(list (car cvor) (+ (nth 0 (cdr cvor)) 1))))
-	)
-)
-
-(defun nadjiSusede(l)
-	(cond
-		((member (car l) 	))
-	)
-)
-
-(defun dodajCvorUListuPoteza(potezz s)
-	(cond
-		((equal s 'X) (setq listaPotezaX (append listaPotezaX (list potez))))
-		((equal s 'O) (setq listaPotezaO (append listaPotezaO (list potez))))
-	)
-	(format t "~% ~% ~a" listaPotezaX)
-	(format t "~% ~% ~a" listaPotezaO)
-	(format t "~% ~%")
-)
-
-(defun dodajCvorUGrafuSuseda(cvor)
-	
-
-	; (setq tmpPotencijalniSusedi (nadjiPotencijalneSusede cvor))
-
-	; (cond
-	; 	(t (format t "~% ~% ~% ~a" listaPotezaX))
-	; )
-)
 
 (start)
 
