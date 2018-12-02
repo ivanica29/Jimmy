@@ -300,7 +300,7 @@
 
 	(setq tmp (nadjiPotencijalneSusede '(F 5)))
 	(format t "~%~a~%" tmp)
-	(format t "~a" (nadjiSusede tmp))
+	(format t "~a" (nadjiSusede tmp listaPotezaX))
 	(format t "~%~a" listaPotezaX)
 )
 	
@@ -394,13 +394,23 @@
 		(t (list (list (car cvor) (- (nth 0 (cdr cvor)) 1))	(list (car cvor) (+ (nth 0 (cdr cvor)) 1))))
 	)
 )
+(defun nadjiSusede(potencijalniSusedi listaPoteza)
+	(if (null (car listaPoteza))
+		(nadjiSusede (cdr potencijalniSusedi) listaPotezaX)
+			;else
+			(if (null (car potencijalniSusedi)) '()
+				;else
+				(if (equal (caar potencijalniSusedi) (caar listaPoteza)) 
+					(if (equal (cdar potencijalniSusedi) (cdar listaPoteza))(append (list(car potencijalniSusedi)) (nadjiSusede (cdr potencijalniSusedi) listaPotezaX))
+					;else
+					(nadjiSusede potencijalniSusedi (cdr listaPoteza))
+					)
+					;else
+					(nadjiSusede potencijalniSusedi (cdr listaPoteza))
+				)
+			)
+)
 
-(defun nadjiSusede(potencijalniSusedi)
-	(cond
-		((null (car potencijalniSusedi)) '())
-		((member (car potencijalniSusedi) listaPotezaX) (format t "Doso sam ovde"))
-		(t (nadjiSusede (cdr potencijalniSusedi)))
-	)
 )
 
 (defun dodajCvorUListuPoteza(potezz s)
