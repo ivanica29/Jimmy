@@ -254,7 +254,7 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
-	(dodajCvorUListuPoteza s)
+	;(dodajCvorUListuPoteza s)
 	;(dodajCvorUGrafuSuseda potez)
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
@@ -482,10 +482,8 @@
 
 (defun dodajCvorUListuPoteza(potezz s)
 	(cond
-		; ((equal s 'X) (append listaPotezaX 'O))
-		; ((equal s 'O) (append listaPotezaO potez))
-		((equal s 'X) (setq listaPotezaX (append (list listaPotezaX) potezz)))
-		((equal s 'O) (setq listaPotezaO (append listaPotezaO potezz)))
+		((equal s 'X) (setq listaPotezaX (append listaPotezaX (list potez))))
+		((equal s 'O) (setq listaPotezaO (append listaPotezaO (list potez))))
 	)
 	(format t "~% ~% ~a" listaPotezaX)
 	(format t "~% ~% ~a" listaPotezaO)
