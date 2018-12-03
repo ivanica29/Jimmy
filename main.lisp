@@ -9,23 +9,13 @@
 	(stampajTablu trenutnoStanjeTable	)
 	
 	(setq trenutnoStanjeX (generisiTabluXO dimenzije 0 'X))
-	; (stampajPrviRed 0)
-	; (stampajTabluXO trenutnoStanjeX 'X)
-	
 	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
-	; (stampajPrviRed 0)
-	; (stampajTabluXO trenutnoStanjeO 'O)
 	(setq listaPotezaX '())
 	(setq listaPotezaO '())
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
 	(setq grafSusedaX '())
 	(setq grafSusedaO '())
-	 ;(format t "~a " listaCvorova)
-	; (format t "~%")
-
-	;(format t "~a" (dodajCvorUGrafuSuseda '(F 5)))
-
 
 	(igraj prviIgrac)
 
@@ -47,10 +37,10 @@
 	(defvar grafSusedaO)
 		
 	(defvar listaPotezaX)
-		;(setq listaPotezaX '())
 	(defvar listaPotezaO)
-		;(setq listaPotezaO '())
-)
+
+	(defvar listaKrajnjihCvorova)
+	)
 
 ; ===================
 ; Dimenzije
@@ -304,14 +294,7 @@
 	(dodajCvorUListuPoteza potez s)
 	(upisiPotez s)
 	(dodajCvorUGrafuSuseda potez s)
-	(format t "~a" grafSusedaX)
-	(format t "~%")
-	(format t "~a" grafSusedaO)
-	(format t "~%")
-	(setq tmp (nadjiPotencijalneSusede potez))
-	(format t "~%~a~%" tmp)
-	;(format t "~a" (nadjiSusede tmp listaPotezaX))
-	; (format t "~%~a" listaPotezaX)
+	(listaKrajnjih)
 )
 	
 (defun dodajPotezX(potez s)
@@ -384,7 +367,6 @@
 (defun nadjiGornjePotencijalneSusede(cvor)
 	(setq trRed (nadjiRed (car cvor)))
 	(setq trKolona (nth 0 (cdr cvor)))
-	(format t "~a" (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor))
 	(if (> (- (nth 0 trRed) 1) -1)
 		(if(> (- trKolona 1) -1)
 			(if (or (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor)
@@ -511,16 +493,7 @@
 		((equal s 'X) (setq listaPotezaX (append listaPotezaX (list potez))))
 		((equal s 'O) (setq listaPotezaO (append listaPotezaO (list potez))))
 	)
-	;(format t "~% ~% ~a" listaPotezaX)
-	;(format t "~% ~% ~a" listaPotezaO)
-	;(format t "~% ~%")
-)
-
-; (defun dodajSusedUListuPoteza(cvor sused grafSuseda)
-; 	(cond
-; 		((equal cvor (caar grafSuseda)) )
-; 	)
-; )
+	)
 
 (defun uporediDvaCvora(cvor1 cvor2)
 	(if (equal (car cvor1) (car cvor2))
@@ -535,15 +508,6 @@
 )
 
 (defun dodajSusedaX(cvor sused graf)
-	;(format t "~a ~%" cvor)
-	; (format t "~a ~%"  (caar grafSusedaX))
-	; (format t "da li je jednoako ~a~%" (uporediDvaCvora cvor (caar grafSusedaX)))
-	; (format t "~%~%~% graf ~a ~%" graf)
-	; (format t "~a dsada ~%" (car graf))
-	; (format t "~a dsada ~%" (cdar graf))
-	; (format t "~a susedi: ~%" sused)
-	; (format t "~a isto ~%" (uporediDvaCvora sused (caar graf)))
-	; (format t "~a cadr graf ~%" (cadar graf))
 	(cond
 		((null graf) '())
 		((uporediDvaCvora sused (caar graf)) (if (null (cadar graf)) (setf (car graf) (list (append  (caar graf)) (list cvor)))  (setf (cadar graf) (append (cadar graf) (list cvor)))))
@@ -552,41 +516,15 @@
 )
 
  (defun dodajSusedeCvoruX(cvor susedi grafSuseda)
-
-; (format t "~a susedi~%" susedi)
-; (format t "~a cvor~%" cvor)
-; (format t "~a graf suseda~%" (caar grafSuseda))
-
-
-
 	(if (null (car susedi)) '()
 		;else
 		(progn
 			(dodajSusedaX cvor (car susedi) grafSusedaX)
 			(dodajSusedeCvoruX cvor (cdr susedi) grafSusedaX)
 		)
-		; (if (uporediDvaCvora (car susedi) (caar grafSuseda))
-		; 	;then
-		; 	;(append (cdr grafSuseda) (list(car susedi)))
-		; 	(dodajSuseda cvor (car susedi) grafSusedaX)
-		; 	;else
-		; 	(dodajSusedeCvoru cvor susedi (cdr grafSusedaX))
-	)
-; 	(format t "grad suseda after: ~a~%~%" grafSused
-	;(dodajSuseda '(F 4) '(F 5) grafSusedaX)
-	;(format t "~% ~a graf suseda u dodajSusedeCvoru ~%" grafSusedaX)
-)
+))	
 
  (defun dodajSusedaO(cvor sused graf)
-	;(format t "~a ~%" cvor)
-	; (format t "~a ~%"  (caar grafSusedaX))
-	; (format t "da li je jednoako ~a~%" (uporediDvaCvora cvor (caar grafSusedaX)))
-	; (format t "~%~%~% graf ~a ~%" graf)
-	; (format t "~a dsada ~%" (car graf))
-	; (format t "~a dsada ~%" (cdar graf))
-	; (format t "~a susedi: ~%" sused)
-	; (format t "~a isto ~%" (uporediDvaCvora sused (caar graf)))
-	; (format t "~a cadr graf ~%" (cadar graf))
 	(cond
 		((null graf) '())
 		((uporediDvaCvora sused (caar graf)) (if (null (cadar graf)) (setf (car graf) (list (append  (caar graf)) (list cvor)))  (setf (cadar graf) (append (cadar graf) (list cvor)))))
@@ -595,50 +533,28 @@
 )
 
  (defun dodajSusedeCvoruO(cvor susedi grafSuseda)
-
-; (format t "~a susedi~%" susedi)
-; (format t "~a cvor~%" cvor)
-; (format t "~a graf suseda~%" (caar grafSuseda))
-
-
-
 	(if (null (car susedi)) '()
 		;else
 		(progn
 			(dodajSusedaO cvor (car susedi) grafSusedaO)
 			(dodajSusedeCvoruO cvor (cdr susedi) grafSusedaO)
 		)
-		; (if (uporediDvaCvora (car susedi) (caar grafSuseda))
-		; 	;then
-		; 	;(append (cdr grafSuseda) (list(car susedi)))
-		; 	(dodajSuseda cvor (car susedi) grafSusedaX)
-		; 	;else
-		; 	(dodajSusedeCvoru cvor susedi (cdr grafSusedaX))
-	)
-; 	(format t "grad suseda after: ~a~%~%" grafSused
-	;(dodajSuseda '(F 4) '(F 5) grafSusedaX)
-	;(format t "~% ~a graf suseda u dodajSusedeCvoru ~%" grafSusedaX)
-)
+))
 
 (defun dodajCvorUGrafuSuseda(cvor s)
-	;(format t "~a" (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX))
-	;(format t "~a" s)
-	;(format t "~a" (append (list cvor) (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))
 	(cond
 		((equal s 'X) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))) )) (if (not (null (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX))) (dodajSusedeCvoruX cvor (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) grafSusedaX ))	)
 		((equal s 'O) (setq grafSusedaO (append grafSusedaO (list (append (list potez) (list (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) ))))) (if (not (null (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO))) (dodajSusedeCvoruO cvor (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) grafSusedaO )) )
 	) 
 )
 
-
-
 ; ===================
 ; Stranice
 ;====================
 
 ;primer za 6x6
- (defun listaKrajnjihCvorova()
-	(setq listaKrajnjih
+ (defun listaKrajnjih()
+	(setq listaKrajnjihCvorova
 	(list (list 'A '0) ;;(A 0)
 		  (list 'A (- dimenzije 1)) ;;(A 5)
 		  (list (nadjiSlovo(- dimenzije 1)) '0) ;;(F 0)
@@ -714,6 +630,4 @@
 		)
 )
 
-
 (start)
-
