@@ -447,7 +447,7 @@
 	;(format t "~a" s)
 	;(format t "~a" (append (list cvor) (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))
 	(cond
-		((equal s 'X) (setq grafSuseda (append (append (list cvor) (append (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))) ))
+		((equal s 'X) (setq grafSuseda (append grafSuseda (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))))))
 		((equal s 'O) (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO))
 	)
 )
