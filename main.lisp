@@ -18,7 +18,8 @@
 	(setq listaPotezaO '())
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
-	(setq grafSuseda '())
+	(setq grafSusedaX '())
+	(setq grafSusedaO '())
 	 ;(format t "~a " listaCvorova)
 	; (format t "~%")
 
@@ -41,7 +42,8 @@
  	(defvar trenutniRed)
  	(defvar trenutnaKolona)
 	(defvar potez)
-	(defvar grafSuseda)
+	(defvar grafSusedaX)
+	(defvar grafSusedaO)
 		
 	(defvar listaPotezaX)
 		;(setq listaPotezaX '())
@@ -299,10 +301,13 @@
 	(dodajCvorUListuPoteza potez s)
 	(upisiPotez s)
 	(dodajCvorUGrafuSuseda potez s)
-	(format t "~a" grafSuseda)
+	(format t "~a" grafSusedaX)
+	(format t "~%")
+	(format t "~a" grafSusedaO)
+	(format t "~%")
 	(setq tmp (nadjiPotencijalneSusede potez))
 	(format t "~%~a~%" tmp)
-	; (format t "~a" (nadjiSusede tmp listaPotezaX))
+	;(format t "~a" (nadjiSusede tmp listaPotezaX))
 	; (format t "~%~a" listaPotezaX)
 )
 	
@@ -457,8 +462,8 @@
 	;(format t "~a" s)
 	;(format t "~a" (append (list cvor) (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))
 	(cond
-		((equal s 'X) (setq grafSuseda (append grafSuseda (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))))))
-		((equal s 'O) (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO))
+		((equal s 'X) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))))))
+		((equal s 'O) (setq grafSusedaO (append grafSusedaO (list (append (list potez) (list (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) ))))))
 	)
 )
 
