@@ -457,12 +457,30 @@
 	;(format t "~% ~%")
 )
 
+(defun dodajSusedeCvoru(susedi listaPoteza)
+	(if (null (car listaPoteza))
+		(dodajSusedeCvoru (cdr susedi) listaPotezaX)
+			;else
+			(if (null (car susedi)) '()
+				;else
+				(if (equal (caar susedi) (caar listaPoteza)) 
+					(if (equal (cdar susedi) (cdar listaPoteza))(append (list(car susedi)) (dodajSusedeCvoru (cdr susedi) listaPotezaX))
+					;else
+					(dodajSusedeCvoru susedi (cdr listaPoteza))
+					)
+					;else
+					(dodajSusedeCvoru susedi (cdr listaPoteza))
+				)
+			)
+	)
+)
+
 (defun dodajCvorUGrafuSuseda(cvor s)
 	;(format t "~a" (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX))
 	;(format t "~a" s)
 	;(format t "~a" (append (list cvor) (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))
 	(cond
-		((equal s 'X) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))))))
+		((equal s 'X) (if (listp (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)) (dodajSusedeCvoru (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) listaPotezaX ) ) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))) )))
 		((equal s 'O) (setq grafSusedaO (append grafSusedaO (list (append (list potez) (list (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) ))))))
 	)
 )
