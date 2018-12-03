@@ -4,6 +4,7 @@
  	(izborPrvogIgraca)
 	
   	(setq trenutnoStanjeTable (generisiTablu dimenzije 0))
+	(setq istorijaTable (generisiListuT trenutnoStanjeTable))
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable	)
 	
@@ -55,7 +56,9 @@
 ; Dimenzije
 ;====================
 
-
+(defun generisiListuT(tabla)
+	(append tabla)
+)
 (defun unosDimenzija()
 	(format t "Unesite velicinu sestougla: ")
 	(setq dimenzije (read))
@@ -384,7 +387,8 @@
 	(format t "~a" (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor))
 	(if (> (- (nth 0 trRed) 1) -1)
 		(if(> (- trKolona 1) -1)
-			(if (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor)
+			(if (or (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor)
+				(equal(list (nadjiSlovo(- dimenzije 1)) (- (* dimenzije 2) 2)) cvor))
 				 (list(list (nadjiSlovo(- (nth 0 trRed) 1)) (- trKolona 1) ))
 				 (list(list (nadjiSlovo(- (nth 0 trRed) 1)) (- trKolona 1)) (list (nadjiSlovo(- (nth 0 trRed) 1)) trKolona ))															
 				 )	
@@ -410,10 +414,13 @@
 (defun nadjiLevogIDesnogPotencijalnogSuseda(cvor)
 	 (setq trRed (nadjiRed (car cvor)))
 	 (setq trKolona (nth 0 (cdr cvor)))	
-	 (if (equal(car(provera4 (list cvor) (listaCvorova_4 dimenzije 1 0))) cvor)
+	 (if (or (equal(car(provera4 (list cvor) (listaCvorova_4 dimenzije 1 0))) cvor)
+				(equal(list (nadjiSlovo(- (* 2 dimenzije) 2)) (- dimenzije 1)) cvor))
+			
 			(list(list (nadjiSlovo(nth 0 trRed)) (+ trKolona 1)))
 			;else
-			(if (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor)
+			(if (or (equal(car(provera5 (list cvor) (listaCvorova_5 1 dimenzije 0))) cvor)
+				(equal(list 'A (- dimenzije 1)) cvor))
 				(list(list (nadjiSlovo(nth 0 trRed)) (- trKolona 1)))
 				;else
 				(if(> (- trKolona 1) -1)
