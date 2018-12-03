@@ -436,7 +436,7 @@
 			(if (null (car potencijalniSusedi)) '()
 				;else
 				(if (equal (caar potencijalniSusedi) (caar listaPoteza)) 
-					(if (equal (cdar potencijalniSusedi) (cdar listaPoteza))(append (list(car potencijalniSusedi)) (nadjiSusedeO (cdr potencijalniSusedi) listaPotezaO))
+					(if (equal (cdar potencijalniSusedi) (cdar listaPoteza)) (append (list(car potencijalniSusedi)) (nadjiSusedeO (cdr potencijalniSusedi) listaPotezaO))
 					;else
 					(nadjiSusedeO potencijalniSusedi (cdr listaPoteza))
 					)
@@ -457,35 +457,108 @@
 	;(format t "~% ~%")
 )
 
- (defun dodajSusedeCvoru(susedi grafSuseda)
-; 	(format t "~a ~%~%" (car susedi))
-(format t "graf suseda:~a ~%" grafSusedaX)
-(format t "susedi: ~a~%" (car susedi))	
-(format t "graf: ~a~%" (car grafSuseda))
-(format t "nda: ~a~%" (equal (car susedi) (car grafSuseda)))
-; 	(format t "~a ~%~%" (car grafSuseda))
-; 	(format t "~a" (equal (car susedi) (car grafSuseda)))
-	(if (null (car susedi)) '()
-		(if (equal (car susedi) (caar grafSuseda))
-		(append (list (cdr grafSuseda)) (car susedi))
+; (defun dodajSusedUListuPoteza(cvor sused grafSuseda)
+; 	(cond
+; 		((equal cvor (caar grafSuseda)) )
+; 	)
+; )
+
+(defun uporediDvaCvora(cvor1 cvor2)
+	(if (equal (car cvor1) (car cvor2))
+		;then
+		(if (equal (cdr cvor1) (cdr cvor2))
+			;then
+			t
+		)
 		;else
-		(dodajSusedeCvoru (cdr susedi) grafSusedaX)
-	))
-	; (if (null (car listaPoteza))
-	; 	(dodajSusedeCvoru (cdr susedi) listaPotezaX)
-	; 		;else
-	; 		(if (null (car susedi)) '()
-	; 			;else
-	; 			(if (equal (caar susedi) (caar listaPoteza)) 
-	; 				(if (equal (cdar susedi) (cdar listaPoteza))(append (list(car susedi)) (dodajSusedeCvoru (cdr susedi) listaPotezaX))
-	; 				;else
-	; 				(dodajSusedeCvoru susedi (cdr listaPoteza))
-	; 				)
-	; 				;else
-	; 				(dodajSusedeCvoru susedi (cdr listaPoteza))
-	; 			)
-	; 		)
-	;)
+		nil
+	)
+)
+
+(defun dodajSusedaX(cvor sused graf)
+	;(format t "~a ~%" cvor)
+	; (format t "~a ~%"  (caar grafSusedaX))
+	; (format t "da li je jednoako ~a~%" (uporediDvaCvora cvor (caar grafSusedaX)))
+	; (format t "~%~%~% graf ~a ~%" graf)
+	; (format t "~a dsada ~%" (car graf))
+	; (format t "~a dsada ~%" (cdar graf))
+	; (format t "~a susedi: ~%" sused)
+	; (format t "~a isto ~%" (uporediDvaCvora sused (caar graf)))
+	; (format t "~a cadr graf ~%" (cadar graf))
+	(cond
+		((null graf) '())
+		((uporediDvaCvora sused (caar graf)) (if (null (cadar graf)) (setf (car graf) (list (append  (caar graf)) (list cvor)))  (setf (cadar graf) (append (cadar graf) (list cvor)))))
+		(t (dodajSusedaX cvor sused (cdr graf)))
+	)
+)
+
+ (defun dodajSusedeCvoruX(cvor susedi grafSuseda)
+
+; (format t "~a susedi~%" susedi)
+; (format t "~a cvor~%" cvor)
+; (format t "~a graf suseda~%" (caar grafSuseda))
+
+
+
+	(if (null (car susedi)) '()
+		;else
+		(progn
+			(dodajSusedaX cvor (car susedi) grafSusedaX)
+			(dodajSusedeCvoruX cvor (cdr susedi) grafSusedaX)
+		)
+		; (if (uporediDvaCvora (car susedi) (caar grafSuseda))
+		; 	;then
+		; 	;(append (cdr grafSuseda) (list(car susedi)))
+		; 	(dodajSuseda cvor (car susedi) grafSusedaX)
+		; 	;else
+		; 	(dodajSusedeCvoru cvor susedi (cdr grafSusedaX))
+	)
+; 	(format t "grad suseda after: ~a~%~%" grafSused
+	;(dodajSuseda '(F 4) '(F 5) grafSusedaX)
+	;(format t "~% ~a graf suseda u dodajSusedeCvoru ~%" grafSusedaX)
+)
+
+ (defun dodajSusedaO(cvor sused graf)
+	;(format t "~a ~%" cvor)
+	; (format t "~a ~%"  (caar grafSusedaX))
+	; (format t "da li je jednoako ~a~%" (uporediDvaCvora cvor (caar grafSusedaX)))
+	; (format t "~%~%~% graf ~a ~%" graf)
+	; (format t "~a dsada ~%" (car graf))
+	; (format t "~a dsada ~%" (cdar graf))
+	; (format t "~a susedi: ~%" sused)
+	; (format t "~a isto ~%" (uporediDvaCvora sused (caar graf)))
+	; (format t "~a cadr graf ~%" (cadar graf))
+	(cond
+		((null graf) '())
+		((uporediDvaCvora sused (caar graf)) (if (null (cadar graf)) (setf (car graf) (list (append  (caar graf)) (list cvor)))  (setf (cadar graf) (append (cadar graf) (list cvor)))))
+		(t (dodajSusedaO cvor sused (cdr graf)))
+	)
+)
+
+ (defun dodajSusedeCvoruO(cvor susedi grafSuseda)
+
+; (format t "~a susedi~%" susedi)
+; (format t "~a cvor~%" cvor)
+; (format t "~a graf suseda~%" (caar grafSuseda))
+
+
+
+	(if (null (car susedi)) '()
+		;else
+		(progn
+			(dodajSusedaO cvor (car susedi) grafSusedaO)
+			(dodajSusedeCvoruO cvor (cdr susedi) grafSusedaO)
+		)
+		; (if (uporediDvaCvora (car susedi) (caar grafSuseda))
+		; 	;then
+		; 	;(append (cdr grafSuseda) (list(car susedi)))
+		; 	(dodajSuseda cvor (car susedi) grafSusedaX)
+		; 	;else
+		; 	(dodajSusedeCvoru cvor susedi (cdr grafSusedaX))
+	)
+; 	(format t "grad suseda after: ~a~%~%" grafSused
+	;(dodajSuseda '(F 4) '(F 5) grafSusedaX)
+	;(format t "~% ~a graf suseda u dodajSusedeCvoru ~%" grafSusedaX)
 )
 
 (defun dodajCvorUGrafuSuseda(cvor s)
@@ -493,8 +566,8 @@
 	;(format t "~a" s)
 	;(format t "~a" (append (list cvor) (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)))
 	(cond
-		((equal s 'X) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))) )) (if (listp (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX)) (dodajSusedeCvoru (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) listaPotezaX ) )	)
-		((equal s 'O) (setq grafSusedaO (append grafSusedaO (list (append (list potez) (list (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) ))))))
+		((equal s 'X) (setq grafSusedaX (append grafSusedaX (list (append (list potez) (list (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) ))) )) (if (not (null (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX))) (dodajSusedeCvoruX cvor (nadjiSusedeX (nadjiPotencijalneSusede cvor) listaPotezaX) grafSusedaX ))	)
+		((equal s 'O) (setq grafSusedaO (append grafSusedaO (list (append (list potez) (list (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) ))))) (if (not (null (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO))) (dodajSusedeCvoruO cvor (nadjiSusedeO (nadjiPotencijalneSusede cvor) listaPotezaO) grafSusedaO )) )
 	) 
 )
 
