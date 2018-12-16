@@ -19,8 +19,9 @@
 	(setq grafSusedaO '())
 	(setq brojRedova (- (* dimenzije 2) 1))
 
-	(setq glavnaLista (sviPoteziTable brojRedova brojRedova dimenzije dimenzije 0 0 0))
-	(format t "~% Lista svih poteza: ~a" glavnaLista)
+	;;mogucestanje	
+	(setq  mogucestanje (novo_stanje (car trenutnoStanjeX) (cdr trenutnoStanjeX) 0 0 0))
+	(format t "graf ~a ~%" mogucestanje )
 	(igraj prviIgrac)
 	
 )
@@ -39,12 +40,14 @@
 	(defvar potez)
 	(defvar grafSusedaX)
 	(defvar grafSusedaO)
-	(defvar  glavnaLista)
+	
 	(defvar listaPotezaX)
 	(defvar listaPotezaO)
-
+	
+	(defvar mogucestanje)
+	
 	(defvar listaKrajnjihCvorova)
-	)
+)
 	
 	
 	
@@ -274,6 +277,8 @@
 	)
 	;(stampajPrviRed 0)
 	;(stampajTabluXO trenutnoStanjeX 'X)
+	(setq mogucestanje (novo_stanje (car trenutnoStanjeX) (cdr trenutnoStanjeX) 0 0 0))
+	(format t "stanje ~a ~%" mogucestanje)
 )
  (defun upisiPotezO(s)
 	(cond
@@ -676,25 +681,26 @@
 	)
 )
 	
-(defun sviPoteziTable (brojRedova pomocniRed dimenzije n brSlova kolona pomocnaKolona)
-	(setq podlista '())
-		(cond 
-			;dimenzija
-			((> brojRedova (+(floor pomocniRed 2 ) 1)) 
-			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova (+ kolona 1) pomocnaKolona))
-			(sviPoteziTable (- brojRedova 1) pomocniRed (+ n 1) (+ n 1) (+ brSlova 1) 0 0)
-			))
-			;polovina
-			((= brojRedova (+(floor pomocniRed 2 ) 1))
-			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova(+ kolona 1) pomocnaKolona))
-			(sviPoteziTable (- brojRedova 1) pomocniRed (- n 1) (- n 1) (+ brSlova 1) 1 1)
-			))
-			;dimenzija*2
-			((> brojRedova 0)
-			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova(+ kolona 1) pomocnaKolona))
-			(sviPoteziTable (- brojRedova 1) pomocniRed (- n 1) (- n 1) (+ brSlova 1) (+ pomocnaKolona 1) (+ pomocnaKolona 1))
-			))
-		(t '())
-))
+;;dodato za moguce poteze
+(defun novo_stanje(trenutno ost i j c)	
+	(if (equal ost '()) '()
+	;else
+		(if (equal(car trenutno) '()) (novo_stanje (car ost) (cdr ost) (+ i 1) 0 0)
+		;else
+		(if (equal (car trenutno) 'X) (append (list(vrati_poziciju i (- j c))) (novo_stanje (cdr trenutno) ost i (+ j 1) c))
+		;else
+		(if (or (equal (car trenutno) '1) (equal (car trenutno) '-1)) 
+		(novo_stanje (cdr trenutno) ost i (+ j 1) c)
+		;else
+		(novo_stanje (cdr trenutno) ost i (+ j 1) (+ c 1))
+		)		
+		)
+		)
+	)	
+		
+)
+(defun vrati_poziciju(xi xj)
+	(list(nadjiSlovo xi) xj )
+)
 
 (start)
