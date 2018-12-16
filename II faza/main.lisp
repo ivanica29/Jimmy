@@ -13,13 +13,18 @@
 	(setq listaPotezaX '())
 	(setq listaPotezaO '())
 	(setq glavnaLista '())
+	(setq moguciPotezi '())
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
 	(setq grafSusedaX '())
 	(setq grafSusedaO '())
 	(setq brojRedova (- (* dimenzije 2) 1))
-
+	
+	(setq moguciPotezi (sviPoteziTable brojRedova brojRedova dimenzije dimenzije 0 0 0))
 	(setq glavnaLista (sviPoteziTable brojRedova brojRedova dimenzije dimenzije 0 0 0))
+	;(format t "~% Lista svih poteza: ~a" glavnaLista)
+	
+	(obrisi '(a 0) glavnaLista)
 	(format t "~% Lista svih poteza: ~a" glavnaLista)
 	(igraj prviIgrac)
 	
@@ -40,6 +45,7 @@
 	(defvar grafSusedaX)
 	(defvar grafSusedaO)
 	(defvar  glavnaLista)
+	(defvar  moguciPotezi)
 	(defvar listaPotezaX)
 	(defvar listaPotezaO)
 
@@ -262,6 +268,9 @@
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 	
+	(obrisi s glavnaLista)
+	
+	(format t "~% Lista svih poteza: ~a" glavnaLista)
 	;(nadjiPotencijalneSusede s)
 	
 	
@@ -307,7 +316,8 @@
 	(dodajCvorUGrafuSuseda potez s)
 	(listaKrajnjih)
 	
-	 
+	(obrisi s glavnaLista)
+	(format t "~% Lista svih poteza: ~a" glavnaLista)
 	
 )
 	
@@ -696,5 +706,11 @@
 			))
 		(t '())
 ))
+
+(defun listaMogucihPoteza (potez glavnaLista)
+	(cond ((null l) '())
+	((equalp potez (car glavnaLista)) (obrisi potez (cdr glavnaLista)))
+	(t (cons (car glavnaLista) (obrisi potez (cdr glavnaLista)))))) 
+
 
 (start)
