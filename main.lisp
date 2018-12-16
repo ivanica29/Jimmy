@@ -12,13 +12,17 @@
 	(setq trenutnoStanjeO (generisiTabluXO dimenzije 0 'O))
 	(setq listaPotezaX '())
 	(setq listaPotezaO '())
+	(setq glavnaLista '())
 	;;dodato za cvorove
 	(setq listaCvorova (listaSvihCvorova))
 	(setq grafSusedaX '())
 	(setq grafSusedaO '())
+	(setq brojRedova (- (* dimenzije 2) 1))
 
+	(setq glavnaLista (sviPoteziTable brojRedova brojRedova dimenzije dimenzije 0 0 0))
+	(format t "~% Lista svih poteza: ~a" glavnaLista)
 	(igraj prviIgrac)
-
+	
 )
 
 (defun kreirajGlobalnePromenljive()
@@ -35,12 +39,15 @@
 	(defvar potez)
 	(defvar grafSusedaX)
 	(defvar grafSusedaO)
-		
+	(defvar  glavnaLista)
 	(defvar listaPotezaX)
 	(defvar listaPotezaO)
 
 	(defvar listaKrajnjihCvorova)
 	)
+	
+	
+	
 
 ; ===================
 ; Dimenzije
@@ -254,6 +261,10 @@
 	;(dodajCvorUGrafuSuseda potez)
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
+	
+	;(nadjiPotencijalneSusede s)
+	
+	
 )
  (defun upisiPotezX(s)
 	(cond
@@ -295,6 +306,9 @@
 	(upisiPotez s)
 	(dodajCvorUGrafuSuseda potez s)
 	(listaKrajnjih)
+	
+	 
+	
 )
 	
 (defun dodajPotezX(potez s)
@@ -629,5 +643,58 @@
 			))
 		)
 )
+
+;=================
+;novo-stanje
+;=============
+(defun novo-stanje1 (potez listaPotezaX)
+	(cond ((null listaPotezaX) 't)
+		((ista-stanja potez (car listaPotezaX)) nil)
+		(t (novo-stanje potez (cdr listaPotezaX))))
+	)
+(defun novo-stanje2 (potez listaPotezaO)
+	(cond ((null listaPotezaO) 't)
+		((ista-stanja potez (car listaPotezaO)) nil)
+		(t (novo-stanje potez (cdr listaPotezaO))))
+	)
+	
+(defun ista-stanja (potez1 potez2)
+	(equal (cdr potez1)(cdr potez2) 't)
+)
+
+
+;=================
+;lista svih poteza na tabli
+;=============
+
+
+(defun vratiSlovo (brSlova lista)
+	(cond
+		((null lista) '())
+		((> brSlova 0) (vratiSlovo (- brSlova 1) (cdr lista)))
+		(t (car lista))
+	)
+)
+	
+(defun sviPoteziTable (brojRedova pomocniRed dimenzije n brSlova kolona pomocnaKolona)
+	(setq podlista '())
+		(cond 
+			;dimenzija
+			((> brojRedova (+(floor pomocniRed 2 ) 1)) 
+			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova (+ kolona 1) pomocnaKolona))
+			(sviPoteziTable (- brojRedova 1) pomocniRed (+ n 1) (+ n 1) (+ brSlova 1) 0 0)
+			))
+			;polovina
+			((= brojRedova (+(floor pomocniRed 2 ) 1))
+			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova(+ kolona 1) pomocnaKolona))
+			(sviPoteziTable (- brojRedova 1) pomocniRed (- n 1) (- n 1) (+ brSlova 1) 1 1)
+			))
+			;dimenzija*2
+			((> brojRedova 0)
+			(if (> dimenzije 0) (cons (append (reverse (cons kolona (cons (vratiSlovo brSlova nizSlova) podlista))) glavnaLista ) (sviPoteziTable brojRedova pomocniRed (- dimenzije 1) n brSlova(+ kolona 1) pomocnaKolona))
+			(sviPoteziTable (- brojRedova 1) pomocniRed (- n 1) (- n 1) (+ brSlova 1) (+ pomocnaKolona 1) (+ pomocnaKolona 1))
+			))
+		(t '())
+))
 
 (start)
