@@ -21,7 +21,7 @@
 
 	;;mogucestanje	
 	(setq  mogucestanje (novo_stanje (car trenutnoStanjeX) (cdr trenutnoStanjeX) 0 0 0))
-	(format t "graf ~a ~%" mogucestanje )
+	;(format t "graf ~a ~%" mogucestanje )
 	(igraj prviIgrac)
 	
 )
@@ -47,6 +47,7 @@
 	(defvar mogucestanje)
 	
 	(defvar listaKrajnjihCvorova)
+
 )
 	
 	
@@ -312,7 +313,9 @@
 	(dodajCvorUGrafuSuseda potez s)
 	(listaKrajnjih)
 	
-	 
+	(setq potezzzz '((A 0)))
+
+	(format t "~a puuuuuuuut ~%" (nadjiPut grafSusedaX potezzzz '(A 4) '()))
 	
 )
 	
@@ -436,6 +439,7 @@
 			)													
 	 )		
 )
+
 (defun provera4(potencijalniSus listaPote)
 	(if (null (car listaPote))
 		(provera4 (cdr potencijalniSus) (listaCvorova_4 dimenzije 1 0))
@@ -453,6 +457,7 @@
 			)
 	)
 )
+
 (defun provera5(potencijalniSus listaPote)
 	(if (null (car listaPote))
 		(provera5 (cdr potencijalniSus) (listaCvorova_5 1 dimenzije 0))
@@ -700,6 +705,58 @@
 		
 )
 
+
+
+;=================
+;	BRIDGE
+;=============
+
+
+(defun daLiJeUListi(cvor l)
+	(cond ((null l) '())
+		((uporediDvaCvora cvor (car l)) t)
+		(t (daLiJeUListi cvor (cdr l)))
+	)
+
+)
+
+(defun noviCvor(potomci cvorovi)
+	(cond ((null potomci) '())
+			((uporediDvaCvora (car potomci) cvorovi)) 
+			(noviCvor (cdr potomci) cvorovi)
+			(t (cons (car potomci) (noviCvor (cdr potomci) cvorovi)))
+	)
+)
+
+(defun dodajPotomke(graf cvor cvorovi)
+	(cond ((null graf) '())
+		((uporediDvaCvora(caar graf) cvor)
+			(noviCvor (cdar graf) cvorovi))
+		(t (dodajPotomke (cdr graf) cvor cvorovi))
+	)
+)
+
+(defun nadjiPut(graf l cilj cvorovi)
+	(cond ((null l) '())
+		((uporediDvaCvora (car l) cilj) (list cilj))
+		(t
+			(let* (
+				(cvorovi1 (append cvorovi (list (car l))))
+				(potomci1 (dodajPotomke graf (car l) (append (cdr l) cvorovi1)))
+				(l1 (append potomci1 (cdr l)))
+				(nadjeniPut (nadjiPut graf l1 cilj cvorovi1))
+			))
+
+			(cond
+				((null nadjeniPut) '())
+				((daLiJeUListi (car nadjeniPut) potomci1) (cons (car l) nadjeniPut) (format t "Dososooo  sam ovde: ~a ~%" nadjeniPut))
+				(t nadjeniPut)
+			)
+			(format t "doso sammm" graf)
+		)
+	) 
+)
+
 ;=================
 ;MIN-MAX
 ;=============
@@ -760,6 +817,6 @@
             )
         )
     )
-)        
+)
 
 (start)
