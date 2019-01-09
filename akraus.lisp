@@ -280,7 +280,7 @@
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
 	
-	;(nadjiPotencijalneSusede s)
+	
 	
 	
 )
@@ -329,6 +329,7 @@
 	
 	(ispitajMost1 potez s)
 	(ispitajVilu potez s)
+	;(format t "susedi ~a~%" (nadjiPotencijalneSusede potez))
 )
 
 (defun dodajPotomke (graf cvor cvorovi)
@@ -581,12 +582,12 @@
 	 )		
 )
 
-(defun nadjiDonjePotencijalneSusede(cvor)
-	(setq tmpBroj (nadjiRed (car cvor)))	
-	(setq tmpBroj (+ (car tmpBroj) 1))
-		(setq tmpSlovo (nadjiSlovo tmpBroj))
-			(cond
-						(t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))))
+; (defun nadjiDonjePotencijalneSusede(cvor)
+	; (setq tmpBroj (nadjiRed (car cvor)))	
+	; (setq tmpBroj (+ (car tmpBroj) 1))
+		; (setq tmpSlovo (nadjiSlovo tmpBroj))
+			; (cond
+						; (t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))))
 
 (defun provera4(potencijalniSus listaPote)
 	(if (null (car listaPote))
