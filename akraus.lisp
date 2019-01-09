@@ -383,6 +383,23 @@
 	)
 )
 
+; (defun ispitajS (listapotez )
+	; (if(equal(ispitajStranu (car listapotez)) (ispitajStranu(cadr listapotez)))
+	; (ispitajS (cdr listapotez))
+	; ;else
+	; 't
+	; )
+; )
+(defun ispitajStranu (potez )
+	(cond
+		((daLiJeUListi potez (listaCvorova_1 0 1 0) )'0 ) 
+		((daLiJeUListi potez (listaCvorova_2 0 dimenzije 0)	 )'1 ) 
+		((daLiJeUListi potez (listaCvorova_3 1 0 0)	 )'2 ) 
+		((daLiJeUListi potez (listaCvorova_4 dimenzije 1 0) ) '3 ) 
+		((daLiJeUListi potez (listaCvorova_5 1 dimenzije 0)	 )'4 ) 
+		((daLiJeUListi potez (listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) 0) ) '5 ) 
+	)
+)
 (defun ispitajVilu2(lista pomocnaLista br pocetnaLista graf)
 	;(format t "graf ssueda ~a ~%" graf)
 	(if (= br 2)
@@ -396,13 +413,18 @@
 				(if (uporediDvaCvora (car lista) (car pomocnaLista))
 					(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
 					;else
-					(if (not (null (nadjiPut graf (list (car lista)) (car pomocnaLista) '())))
-						(progn
-							(format t "naso sam jedan put!! ~%")
-							(ispitajVilu2 lista (cdr pomocnaLista) (+ 1 br) pocetnaLista graf)
+					;(if (not (ispitajS listaUnetihStranicaX)))
+					(if (not(equal(ispitajStranu (car lista)) (ispitajStranu(car pomocnaLista))))
+						(if (not (null (nadjiPut graf (list (car lista)) (car pomocnaLista) '())))
+							(progn
+								(format t "naso sam jedan put!! ~%")
+								(ispitajVilu2 lista (cdr pomocnaLista) (+ 1 br) pocetnaLista graf)
+							)
+							;else
+							(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
 						)
 						;else
-						(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
+						(ispitajVilu2 (cdr lista) pocetnaLista 0 pocetnaLista graf)
 					)
 				)
 			)
