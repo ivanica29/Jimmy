@@ -25,20 +25,15 @@
 	(setq potomci1 '())
 	(setq l1 '())
 	(setq nadjeniPut '())
-	;;mogucestanje	
 	(setq  mogucestanje (novo_stanje (car trenutnoStanjeX) (cdr trenutnoStanjeX) 0 0 0))
+		
+	(setq svaMoguca '())	
 	(setq potencijalniKrajX '())
 	(setq potencijalniKrajO '())
 
-	(setq potencijalniKrajRingX '())
-	(setq potencijalniKrajRingO '())
-
 	(setq listaUnetihStranicaX '())
 	(setq listaUnetihStranicaO '())
-
-	(setq listaNadjenihPuteva '())
 	
-
 	(igraj prviIgrac)
 	
 )
@@ -67,11 +62,11 @@
 	(defvar l1)
 	(defvar nadjeniPut)
 	(defvar mogucestanje)
+	(defvar svaMoguca)
 	
 	(defvar listaKrajnjihCvorova)
 	(defvar listaSvih)
 	(defvar listaUnetihStranicaX)
-	(defvar listaNadjenihPuteva)
 )
 	
 ; ===================
@@ -282,12 +277,20 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeTable)) s ))
 	)
-	;(dodajCvorUListuPoteza s)
-	;(dodajCvorUGrafuSuseda potez)
 	(stampajPrviRed 0)
 	(stampajTablu trenutnoStanjeTable)
+)
 
-	
+(defun stanje(lista pomocna brojac s)
+	(if (< brojac 64)
+		(if (not (equal (car lista) '()))
+			(if (equal(nth brojac lista) '_ )
+				(progn
+					(stanje lista lista (+ brojac 1) s)				
+				)
+			)
+		)
+	)
 )
 
  (defun upisiPotezX(s)
@@ -296,25 +299,44 @@
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeX)) s ))
 	)
-	;(stampajPrviRed 0)
-	;(stampajTabluXO trenutnoStanjeX 'X)
 	(setq mogucestanje (novo_stanje (car trenutnoStanjeX) (cdr trenutnoStanjeX) 0 0 0))
-	;(format t "stanje ~a ~%" mogucestanje)
 )
+
  (defun upisiPotezO(s)
 	(cond
 		((not (validanPotezO)) (format t "Nevalidan potez, pokusajte ponovo. ~%") (igraj igracNaRedu))
 		((< (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 1 (+ (nth 0 trenutnaKolona) (- dimenzije (nth 0 trenutniRed)))) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
 		((>= (nth 0 trenutniRed) (- dimenzije 1)) (setf (nth (+ 2 (nth 0 trenutnaKolona)) (nth (nth 0 trenutniRed) trenutnoStanjeO)) s ))
 	)
-	;(stampajPrviRed 0)
-	;(stampajTabluXO trenutnoStanjeO 'O)
 )
 
 (defun nadjiRed(slovo)
 	(cond
 		(t (cdr (assoc slovo nizVrednostiSlova)))
 	)
+)
+
+;;dodato za moguce poteze
+(defun novo_stanje(trenutno ost i j c)	
+	(if (equal ost '()) '()
+	;else
+		(if (equal(car trenutno) '()) (novo_stanje (car ost) (cdr ost) (+ i 1) 0 0)
+		;else
+		(if (equal (car trenutno) 'X) 
+		(cons '_ (novo_stanje (cdr trenutno) ost i (+ j 1) c))
+		;else
+		(if (equal (car trenutno) '1)
+		(cons 'X (novo_stanje (cdr trenutno) ost i (+ j 1) c))
+		;else
+		(if (equal (car trenutno) '-1) 
+		(cons 'O (novo_stanje (cdr trenutno) ost i (+ j 1) c))
+		;else
+		(novo_stanje (cdr trenutno) ost i (+ j 1) (+ c 1))
+		)
+		)				
+		)
+		)
+	)	
 )
 
 ;dodato za cvorove
@@ -332,64 +354,9 @@
 	(upisiPotez s)
 	(dodajCvorUGrafuSuseda potez s)
 	(listaKrajnjih)
-	
 	(ispitajMost1 potez s)
 	(ispitajVilu potez s)
-	(ispitajPrsten potez s)
-)
-
-(defun ispitajPrsten(potezz s)
-
-	(if (equal s 'X)	
-		(setq potencijalniKrajRingX (append potencijalniKrajRingX (list potezz))))
-	(if (>= (length potencijalniKrajRingX) 6)
-				(ispitajPrsten2 potencijalniKrajRingX potencijalniKrajRingX potencijalniKrajRingX grafSusedaX 0))
-	(if (equal s 'O)
-		(setq potencijalniKrajRingO (append potencijalniKrajRingO (list potezz)))
-	)
-	(if (>= (length potencijalniKrajRingO) 6)
-					(ispitajPrsten2 potencijalniKrajRingO potencijalniKrajRingO potencijalniKrajRingO grafSusedaO 0)
-	)
-)
-
-(defun ispitajPrsten2(lista pomocnaLista pocetnaLista graf brojac) 
-
-	(if (null (car lista)) '()
-		;else
-		(if (null (car pomocnaLista)) 
-			(ispitajPrsten2 (cdr lista) pocetnaLista pocetnaLista graf 0)
-			;else
-			(if (uporediDvaCvora(car lista) (car pomocnaLista))
-				(ispitajPrsten2 lista (cdr pomocnaLista) (cdr pomocnaLista) graf brojac)
-				;else
-				(if(not (null (nadjiPut graf (list (car lista)) (car pomocnaLista) '())))
-					;naso sam put, ispitaj da li su susedi
-					(progn
-						(format t "brojac ~a ~%" brojac)
-
-						(format t "da li su susedi prvi i zadnji? ~a ~%" (daLiSuSusedi graf (car lista) (car pomocnaLista)))
-
-						(ispitajPrsten2 lista (cdr pomocnaLista) (cdr pomocnaLista) graf (+ 1 brojac))
-					)
-					;(format t "Cestitamo, pobelidi ste, napravili ste prsten! a %" (nadjiPut graf (list (car lista)) (car pomocnaLista) '()))
-					;else
-					(progn (ispitajPrsten2 lista (cdr pomocnaLista) (cdr pomocnaLista) graf brojac)
-					(nadjiPut graf (list (car lista)) (car lista) '())
-					)
-				)
-			)
-		)
-	)
-	 ;(nastavak)
-)
-
-(defun daLiSuSusedi(graf cvor1 cvor2)
-	(cond
-		((null (car graf)) '())
-		(())
-		((uporediDvaCvora (caar graf) cvor1) (daLiJeUListi cvor2 (cadar graf)))
-		(t (daLiSuSusedi (cdr graf) cvor1 cvor2))
-	)
+	;(ispitajPrsten potez s)
 )
 
 (defun dodajPotomke (graf cvor cvorovi)
@@ -443,97 +410,42 @@
 	)
 )
 
-(defun ispitajStranu (potez1 potez2) 
 
-	(setq prom1 (cond
-		((daLiJeUListi potez1 (listaCvorova_1 0 1 0) )'0 ) 
-		((daLiJeUListi potez1 (listaCvorova_2 0 dimenzije 0)) '1 ) 
-		((daLiJeUListi potez1 (listaCvorova_3 1 0 0)) '2 ) 
-		((daLiJeUListi potez1 (listaCvorova_4 dimenzije 1 0)) '3 ) 
-		((daLiJeUListi potez1 (listaCvorova_5 1 dimenzije 0)) '4 ) 
-		((daLiJeUListi potez1 (listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) 0) ) '5 ) 
-	))
-	(setq prom2 (cond
-		((daLiJeUListi potez2 (listaCvorova_1 0 1 0) )'0 ) 
-		((daLiJeUListi potez2 (listaCvorova_2 0 dimenzije 0)) '1 ) 
-		((daLiJeUListi potez2 (listaCvorova_3 1 0 0)) '2 ) 
-		((daLiJeUListi potez2 (listaCvorova_4 dimenzije 1 0) )  '3 ) 
-		((daLiJeUListi potez2 (listaCvorova_5 1 dimenzije 0)	 )'4 ) 
-		((daLiJeUListi potez2 (listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) 0) ) '5 ) 
-	))
-
-	(if (equal prom1 prom2) t '())
-)
-
-
-
-(defun ispitajDaLiUListiImaCvorovaIstihStranica(lista pomocnaLista pocetnaLista)
-	(if (null (car lista)) 
-		;then
-		'()
-		;else
-		(if (null (car pomocnaLista))
-			;then
-			(ispitajDaLiUListiImaCvorovaIstihStranica (cdr lista) pocetnaLista pocetnaLista)
-			;else
-			(if (ispitajStranu (car lista) (car pomocnaLista))
-				t
-				'()
-			)
-		)
+(defun ispitajStranu (potez )
+	(cond
+		((daLiJeUListi potez (listaCvorova_1 0 1 0) )'0 ) 
+		((daLiJeUListi potez (listaCvorova_2 0 dimenzije 0)	 )'1 ) 
+		((daLiJeUListi potez (listaCvorova_3 1 0 0)	 )'2 ) 
+		((daLiJeUListi potez (listaCvorova_4 dimenzije 1 0) ) '3 ) 
+		((daLiJeUListi potez (listaCvorova_5 1 dimenzije 0)	 )'4 ) 
+		((daLiJeUListi potez (listaCvorova_6 dimenzije (-(* 2 dimenzije) 2) 0) ) '5 ) 
 	)
 )
-
 (defun ispitajVilu2(lista pomocnaLista br pocetnaLista graf)
-	;(format t "graf ssueda ~a ~%" graf)fro
-	;(format t "~a stranaaa ~%" (ispitajStranu (car lista) (car pomocnaLista)))
-	;(format t "lista: ~a ~%" (car lista))
-	;(format t "pomocnaLista ~a ~%" (car pomocnaLista))
-	;(format t "poredi ~a ~%" (ispitajStranu (car lista) (car pomocnaLista)))
-
-	(format t "lista nasjeni ~a ~%" listaNadjenihPuteva)
-
 	(if (= br 2)
-		(format t "Pobelidi ste napravili ste vilu ~% ")
-
+		(progn
+			(format t "Pobelidi ste napravili ste vilu ~% ")
+			(nastavak)
+		)
 		;else
 		(if (null (car lista)) '()
 		;else
 			(if (null (car pomocnaLista))
-				(progn
-					;(setq listaNadjenihPuteva '())
-					(format t "ovde je lisya noxa ~a ~%"  listaNadjenihPuteva)
-					(ispitajVilu2 (cdr lista) pocetnaLista 0 pocetnaLista graf)
-				)
+				(ispitajVilu2 (cdr lista) pocetnaLista 0 pocetnaLista graf)
 				;else
 				(if (uporediDvaCvora (car lista) (car pomocnaLista))
 					(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
 					;else
-					;(if (not (ispitajS listaUnetihStranicaX)))
-					(if (ispitajStranu (car lista) (car pomocnaLista))
-						(progn
-							;(format t "~a stranaaa ~%" (ispitajStranu (car lista) (car pomocnaLista)))
-							(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
-						)
+					(if (not(equal(ispitajStranu (car lista)) (ispitajStranu(car pomocnaLista))))
 						(if (not (null (nadjiPut graf (list (car lista)) (car pomocnaLista) '())))
 							(progn
-								;(format t "naso sam jedan put!! ~%")
-								(if (not (daLiJeUListi (list (car pomocnaLista)) listaNadjenihPuteva))
-									(setq listaNadjenihPuteva (append listaNadjenihPuteva (list (car pomocnaLista))))
-								)
-								(format t "obradjujem cvor: ~a ~% " (car lista))
-
-								(format t "ovde sam setujem ~a ~%" listaNadjenihPuteva)
-								(format t "ovde ~a ~%" (ispitajDaLiUListiImaCvorovaIstihStranica listaNadjenihPuteva listaNadjenihPuteva  listaNadjenihPuteva ))
-								(if (ispitajDaLiUListiImaCvorovaIstihStranica listaNadjenihPuteva listaNadjenihPuteva  listaNadjenihPuteva )
-									(ispitajVilu2 (cdr lista) pocetnaLista 0 pocetnaLista graf)
-									(ispitajVilu2 lista (cdr pomocnaLista) (+ 1 br) pocetnaLista graf)
-								)
-								;(ispitajVilu2 lista (cdr pomocnaLista) (+ 1 br) pocetnaLista graf listaNadjenihPuteva)
+								(ispitajVilu2 lista (cdr pomocnaLista) (+ 1 br) pocetnaLista graf)
 							)
 							;else
 							(ispitajVilu2 lista (cdr pomocnaLista) br pocetnaLista graf)
 						)
+						;else
+						(ispitajVilu2 (cdr lista) pocetnaLista 0 pocetnaLista graf)
 					)
 				)
 			)
@@ -546,6 +458,7 @@
 		(if (daLiJeUListi potezz listaKrajnjihCvorova)		
 			(setq potencijalniKrajX (append potencijalniKrajX (list potezz)))
 		)
+
 		(if (daLiJeUListi potezz listaKrajnjihCvorova)		
 			(setq potencijalniKrajO (append potencijalniKrajO (list potezz)))
 		)
@@ -559,7 +472,6 @@
 	)
 )
 
-
 (defun ispitajMost2(lista pomocnaLista pocetnaLista graf)
 	(if (null (car lista)) '()
 		;else
@@ -570,7 +482,10 @@
 					(ispitajMost2 lista (cdr pomocnaLista) pocetnaLista graf)
 					;else
 					(if (not (null (nadjiPut graf (list (car lista)) (car pomocnaLista) '())))
-						(format t "Cestitamo, pobelidi ste, napravili ste most! ~a ~%" (nadjiPut graf (list (car lista)) (car pomocnaLista) '()))
+						(progn
+							(format t "Cestitamo, pobelidi ste, napravili ste most! ~a ~%" (nadjiPut graf (list (car lista)) (car pomocnaLista) '()))
+							(nastavak)
+						)
 						;else
 						(progn (ispitajMost2 lista (cdr pomocnaLista) pocetnaLista graf)
 						)
@@ -578,8 +493,43 @@
 				)
 		)
 	)
-	; (format t "Cestitam, podebili ste, napravili ste most~%")
-	; (nastavak)
+)
+
+; ===================
+; PRSTEN
+;====================
+
+(defun ispitajPrsten(potezz s)
+	(if (equal s 'X)	
+		(setq potencijalniKrajX (append potencijalniKrajX (list potezz))))
+	(if (>= (length potencijalniKrajX) 6)
+				(ispitajPrsten2 potencijalniKrajX potencijalniKrajX potencijalniKrajX grafSusedaX))
+	(if (equal s 'O)
+		(setq potencijalniKrajO (append potencijalniKrajO (list potezz)))
+	)
+	(if (>= (length potencijalniKrajO) 6)
+					(ispitajPrsten2 potencijalniKrajO potencijalniKrajO potencijalniKrajO grafSusedaO)
+	)
+)
+
+(defun ispitajPrsten2(lista pomocnaLista pocetnaLista graf) 
+	(if (null (car lista)) '()
+		;else
+		(if (null (car pomocnaLista)) 
+			(ispitajPrsten2 (cdr lista) pocetnaLista pocetnaLista graf)
+			;else
+			(if (uporediDvaCvora(car lista) (car pomocnaLista))
+				(ispitajPrsten2 lista (cdr pomocnaLista) (cdr pomocnaLista) graf)
+				;else
+				(if (not (null (nadjiPut graf (list (car lista)) (car lista) '())))
+					(format t "Cestitamo, pobelidi ste, napravili ste prsten! ~a ~%" (nadjiPut graf (list (car lista)) (car pomocnaLista) '()))
+					;else
+					(progn (ispitajPrsten2 lista (cdr pomocnaLista) (cdr pomocnaLista) graf)
+					)	
+				)
+			)
+		)
+	)
 )
 
 (defun nastavak()
@@ -676,7 +626,7 @@
 (defun nadjiDonjePotencijalneSusede(cvor)
 	(setq trRed (nadjiRed (car cvor)))
 	(setq trKolona (nth 0 (cdr cvor)))
-	(if (<= (+ (nth 0 trRed) 1) (- (* dimenzije 2) 2))
+	(if (< (+ (nth 0 trRed) 1) (- (* dimenzije 2) 2))
 		(if(< (+ trKolona 1) (- (* dimenzije 2) 2))
 			(if (equal(car(provera4 (list cvor) (listaCvorova_4 dimenzije 1 0))) cvor)
 			(list(list (nadjiSlovo(+ (nth 0 trRed) 1)) (+ trKolona 1) ))
@@ -711,13 +661,6 @@
 			)													
 	 )		
 )
-
-; (defun nadjiDonjePotencijalneSusede(cvor)
-	; (setq tmpBroj (nadjiRed (car cvor)))	
-	; (setq tmpBroj (+ (car tmpBroj) 1))
-		; (setq tmpSlovo (nadjiSlovo tmpBroj))
-			; (cond
-						; (t (list (list tmpSlovo (nth 0 (cdr cvor)))	(list tmpSlovo (+ (nth 0 (cdr cvor)) 1))))))
 
 (defun provera4(potencijalniSus listaPote)
 	(if (null (car listaPote))
@@ -796,7 +739,7 @@
 		((equal s 'X) (setq listaPotezaX (append listaPotezaX (list potez))))
 		((equal s 'O) (setq listaPotezaO (append listaPotezaO (list potez))))
 	)
-	)
+)
 
 (defun uporediDvaCvora(cvor1 cvor2)
 	(if (equal (car cvor1) (car cvor2))
@@ -963,30 +906,10 @@
 		(t (car lista))
 	)
 )
-	
-;;dodato za moguce poteze
-(defun novo_stanje(trenutno ost i j c)	
-	(if (equal ost '()) '()
-	;else
-		(if (equal(car trenutno) '()) (novo_stanje (car ost) (cdr ost) (+ i 1) 0 0)
-		;else
-		(if (equal (car trenutno) 'X) (append (list(vrati_poziciju i (- j c))) (novo_stanje (cdr trenutno) ost i (+ j 1) c))
-		;else
-		(if (or (equal (car trenutno) '1) (equal (car trenutno) '-1)) 
-		(novo_stanje (cdr trenutno) ost i (+ j 1) c)
-		;else
-		(novo_stanje (cdr trenutno) ost i (+ j 1) (+ c 1))
-		)		
-		)
-		)
-	)	
-		
-)
 
 ;=============
 ;	BRIDGE
 ;=============
-
 
 (defun daLiJeUListi(cvor l)
 	(cond ((null l) '())	
